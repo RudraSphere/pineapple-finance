@@ -28,12 +28,12 @@ const config: HardhatUserConfig = {
     hardhat: {
       chainId: 137,
       allowUnlimitedContractSize: true,
-      forking: {
-        url: "https://rpc.ankr.com/polygon",
-      },
+      // forking: {
+      //   url: "https://rpc.ankr.com/polygon",
+      // },
       // live: true,
       // mining: { auto: true },
-      // loggingEnabled: true,
+      loggingEnabled: true,
       accounts: {
         mnemonic: process.env.MNEMONICS,
         path: "m/44'/60'/0'/0",

@@ -1,5 +1,10 @@
 {
   "name": "Pineapple",
+  "scripts": {
+    "clean": "rm -rf build crytic-export artifacts cache deployments/local*",
+    "prettier:sol": "prettier --write \"contracts/**/*.sol\"",
+    "test": "IS_TEST=true npx hardhat test"
+  },
   "dependencies": {
     "@nomiclabs/hardhat-solhint": "^3.0.1",
     "@openzeppelin/contracts": "^4.9.3",
