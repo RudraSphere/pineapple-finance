@@ -9,42 +9,42 @@ contract DiamondCutFacet is IDiamondCut, DiamondGovernance {
     event FacetUpdated(address indexed facetAddress, bytes4 indexed selector);
     event FacetRemoved(bytes4 indexed selector);
 
+    struct DiamondStorage {
+        mapping(bytes4 => address) selectorToFacet;
+    }
+
     function diamondCut(
         FacetCut[] calldata _facetCuts,
         address _init,
         bytes calldata _calldata
     ) external onlyUpgradeAdmin {
         DiamondStorage storage ds = diamondStorage();
-        for (uint256 i = 0; i < _facetCuts.length; i++) {
+        for (uint i = 0; i < _facetCuts.length; i++) {
             FacetCutAction action = _facetCuts[i].action;
             address facetAddress = _facetCuts[i].facetAddress;
-            for (
-                uint256 j = 0;
-                j < _facetCuts[i].functionSelectors.length;
-                j++
-            ) {
+            for (uint j = 0; j < _facetCuts[i].functionSelectors.length; j++) {
                 bytes4 selector = _facetCuts[i].functionSelectors[j];
                 if (action == FacetCutAction.Add) {
-                    require(
-                        ds.selectorToFacet[selector] == address(0),
-                        "Selector already added"
-                    );
+                    if (ds.selectorToFacet[selector] != address(0)) {
+                        return;
+                    }
+                    // require(
+                    //     ds.selectorToFacet[selector] == address(0),
+                    //     "Selector already added"
+                    // );
                     ds.selectorToFacet[selector] = facetAddress;
-                    emit FacetUpdated(facetAddress, selector);
                 } else if (action == FacetCutAction.Replace) {
                     require(
                         ds.selectorToFacet[selector] != address(0),
                         "Selector not found"
                     );
                     ds.selectorToFacet[selector] = facetAddress;
-                    emit FacetUpdated(facetAddress, selector);
                 } else if (action == FacetCutAction.Remove) {
                     require(
                         ds.selectorToFacet[selector] != address(0),
                         "Selector not found"
                     );
                     delete ds.selectorToFacet[selector];
-                    emit FacetRemoved(selector);
                 }
             }
         }
@@ -53,10 +53,6 @@ contract DiamondCutFacet is IDiamondCut, DiamondGovernance {
             (bool success, ) = _init.delegatecall(_calldata);
             require(success, "Initialization failed");
         }
-    }
-
-    struct DiamondStorage {
-        mapping(bytes4 => address) selectorToFacet;
     }
 
     function diamondStorage()

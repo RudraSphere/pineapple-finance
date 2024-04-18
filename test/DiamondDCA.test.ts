@@ -9,21 +9,21 @@ describe("DCA Facet", function () {
 
   beforeEach(async () => {
     const fixtures = await localFixtures();
-    const { dcaFacet: _dcaFacet, governor: _deployer } = fixtures;
-    dcaFacet = _dcaFacet;
-    deployerSigner = _deployer;
+    dcaFacet = fixtures.dcaFacet;
+    deployerSigner = fixtures.governor;
   });
 
   it("should allow setting up a DCA order", async function () {
     const tokenAddress = ethers.constants.AddressZero;
-    const amount = ethers.utils.parseUnits("1", 18);
+    const amount = ethers.utils.parseUnits("1", 18); // 1 token, assuming 18 decimals
     const interval = 86400; // 1 day in seconds
 
+    // Use the Diamond to perform the transaction through the DCA Facet
     const txResponse = await dcaFacet
       .connect(deployerSigner)
-      .setupDCA(tokenAddress, amount, interval);
-    console.log("TEST::CALL DONE");
+      .setupDCA(tokenAddress, amount, interval, { gasLimit: 1000000 });
     await txResponse.wait();
-    console.log("TEST::CALL DONE 2");
+
+    console.log("Transaction successfully executed");
   });
 });

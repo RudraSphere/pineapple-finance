@@ -37,7 +37,7 @@ const deployDiamond: DeployFunction = async function (
 
   const Diamond = await deploy("Diamond", {
     from: deployer,
-    // args: [diamondCutFacet.address],
+    args: [diamondCutFacet.address],
     log: true,
   });
 
@@ -64,8 +64,11 @@ const deployDiamond: DeployFunction = async function (
     governanceFacetFactory as unknown as Contract
   );
 
-  log("Selectors for DCAFacet: ", _dcaSelectors);
-  log("Selectors for TokenManagementFacet: ", _tokenManagementSelectors);
+  log("Selectors for DCAFacet: ", _dcaSelectors.join(", "));
+  log(
+    "Selectors for TokenManagementFacet: ",
+    _tokenManagementSelectors.join(", ")
+  );
 
   // Add facets to diamond
   const facetCuts = [

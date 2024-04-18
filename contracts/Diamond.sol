@@ -3,11 +3,23 @@ pragma solidity ^0.8.0;
 
 import "./interfaces/IDiamondLoupe.sol";
 import "./DiamondCutFacet.sol";
+import "hardhat/console.sol";
 
 contract Diamond {
+    address private diamondCutFacet;
+
+    constructor(address _diamondCutFacet) {
+        diamondCutFacet = _diamondCutFacet;
+    }
+
     fallback() external payable {
-        address facet = DiamondCutFacet(address(this)).getFacetAddress(msg.sig);
+        console.log("calling this signature:");
+        console.logBytes4(msg.sig);
+        address facet = DiamondCutFacet(diamondCutFacet).getFacetAddress(
+            msg.sig
+        );
         require(facet != address(0), "Function does not exist.");
+        console.log("Delegating to facet:", facet);
 
         assembly {
             calldatacopy(0, 0, calldatasize())
@@ -22,4 +34,6 @@ contract Diamond {
             }
         }
     }
+
+    receive() external payable {}
 }

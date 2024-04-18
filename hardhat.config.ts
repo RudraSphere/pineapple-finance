@@ -33,6 +33,8 @@ const config: HardhatUserConfig = {
       // },
       // live: true,
       // mining: { auto: true },
+      blockGasLimit: 15000000, // Set to a higher limit
+      gas: 12000000, // Set to a higher limit, optional as Hardhat automatically handles gas
       loggingEnabled: true,
       accounts: {
         mnemonic: process.env.MNEMONICS,
