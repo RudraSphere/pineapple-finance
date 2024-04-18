@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 interface IDCA {
     event DCASetup(
         address indexed user,
