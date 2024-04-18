@@ -7,7 +7,10 @@ async function localFixtures() {
     "Diamond",
     (await deployments.get("Diamond")).address
   );
-  const dcaFacet = await ethers.getContractAt("DCAFacet", diamond.address);
+  const dcaFacet = await ethers.getContractAt(
+    "DCAFacet",
+    (await deployments.get("DCAFacet")).address
+  );
 
   const contracts = {
     dcaFacet,

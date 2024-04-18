@@ -6,8 +6,9 @@ import "./DiamondCutFacet.sol";
 
 contract Diamond {
     fallback() external payable {
-        address facet = DiamondCutFacet(msg.sender).getFacetAddress(msg.sig);
+        address facet = DiamondCutFacet(address(this)).getFacetAddress(msg.sig);
         require(facet != address(0), "Function does not exist.");
+
         assembly {
             calldatacopy(0, 0, calldatasize())
             let result := delegatecall(gas(), facet, 0, calldatasize(), 0, 0)

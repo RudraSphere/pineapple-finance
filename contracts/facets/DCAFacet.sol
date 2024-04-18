@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../interfaces/IDCA.sol";
+import "hardhat/console.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract DCAFacet is IDCA, ReentrancyGuard {
@@ -21,6 +22,7 @@ contract DCAFacet is IDCA, ReentrancyGuard {
         uint256 _interval
     ) external override {
         require(_interval > 0, "Interval must be > 0");
+        console.log("C:: adding");
         userOrders[msg.sender].push(
             DCAOrder({
                 tokenAddress: _tokenAddress,
