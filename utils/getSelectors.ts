@@ -1,8 +1,11 @@
-import { Contract } from "ethers";
+import { ethers } from "ethers";
 
-export function getSelectors(contract: Contract) {
-  const selectors = Object.keys(contract.interface.functions)
-    .filter((fnName) => fnName !== "init(bytes)")
-    .map((fnName) => contract.interface.getSighash(fnName));
-  return selectors;
+type CompatibleContract = {
+  interface: ethers.utils.Interface;
+};
+
+export function getSelectors(contract: CompatibleContract): string[] {
+  return Object.keys(contract.interface.functions).map((signature) =>
+    contract.interface.getSighash(signature)
+  );
 }
