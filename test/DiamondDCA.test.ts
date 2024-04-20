@@ -35,6 +35,15 @@ describe("DCA Facet", function () {
     await approveTx.wait();
     console.log("Allowance set.");
 
+    // Check allowance
+    const allowance = await usdcContract.allowance(
+      deployerSigner.address,
+      dcaFacet.address,
+    );
+    console.log(
+      `Allowance set: ${ethers.utils.formatUnits(allowance, 6)} USDC`,
+    );
+
     // Set up DCA order
     console.log("Setting up DCA order...");
     const tx = await dcaFacet
