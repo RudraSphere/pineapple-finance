@@ -2,17 +2,21 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "../interfaces/IDCA.sol"; // ! TODO: later add this interface.
 import "hardhat/console.sol";
+import "../interfaces/IUniswapV2Router.sol";
 
 interface IAggregatorV3 {
     function getLatestPrice(address token) external view returns (int);
 }
 
 contract DCAFacet is ReentrancyGuard {
+    using SafeERC20 for IERC20;
     struct DCAOrder {
-        address tokenAddress;
+        address fromToken;
+        address toToken;
         uint256 totalAmount;
         uint256 amountPerInterval;
         uint256 interval;
@@ -27,26 +31,36 @@ contract DCAFacet is ReentrancyGuard {
         uint256 currentValue;
         int currentPrice;
     }
-    address public priceAggregator;
+
+    address public immutable priceAggregator;
+    address public immutable uniswapRouter;
 
     event AllOrdersExecuted(address indexed user, uint256 index);
     event DCASetup(
         address indexed user,
-        address token,
+        address fromToken,
+        address toToken,
         uint256 amount,
         uint256 interval,
         uint256 orderCount
     );
-    event DCAExecuted(address indexed user, address token, uint256 amount);
+    event DCAExecuted(
+        address indexed user,
+        address fromToken,
+        address toToken,
+        uint256 amount
+    );
 
     mapping(address => DCAOrder[]) public userOrders;
 
-    constructor(address _priceAggregator) {
+    constructor(address _priceAggregator, address _uniswapRouter) {
         priceAggregator = _priceAggregator;
+        uniswapRouter = _uniswapRouter;
     }
 
     function setupDCA(
-        address _tokenAddress,
+        address _fromToken,
+        address _toToken,
         uint256 _totalAmount,
         uint256 _interval,
         uint256 _orderCount
@@ -54,11 +68,22 @@ contract DCAFacet is ReentrancyGuard {
         require(_interval > 0, "Interval must be > 0");
         require(_orderCount > 0, "Order count must be > 0");
         require(_totalAmount >= _orderCount, "Total amount too low");
-        uint256 amountPerOrder = _totalAmount / _orderCount;
 
+        IERC20(_fromToken).safeTransferFrom(
+            msg.sender,
+            address(this),
+            _totalAmount
+        );
+        console.log(
+            "DCA::Balance After Transfer",
+            IERC20(_fromToken).balanceOf(address(this))
+        );
+
+        uint256 amountPerOrder = _totalAmount / _orderCount;
         userOrders[msg.sender].push(
             DCAOrder({
-                tokenAddress: _tokenAddress,
+                fromToken: _fromToken,
+                toToken: _toToken,
                 totalAmount: _totalAmount,
                 amountPerInterval: amountPerOrder,
                 interval: _interval,
@@ -69,7 +94,8 @@ contract DCAFacet is ReentrancyGuard {
         );
         emit DCASetup(
             msg.sender,
-            _tokenAddress,
+            _fromToken,
+            _toToken,
             _totalAmount,
             _interval,
             _orderCount
@@ -84,19 +110,19 @@ contract DCAFacet is ReentrancyGuard {
         DCAOrder storage order = userOrders[user][index];
         uint256 remainingOrders = order.orderCount - order.ordersPlaced;
         uint256 remainingAmount = remainingOrders * order.amountPerInterval;
-        int price = IAggregatorV3(priceAggregator).getLatestPrice(
-            order.tokenAddress
-        );
+        // int price = IAggregatorV3(priceAggregator).getLatestPrice(
+        //     order.tokenAddress
+        // );
 
-        uint256 currentValue = (remainingAmount * uint256(price)) / 1e18;
+        // uint256 currentValue = (remainingAmount * uint256(price)) / 1e18;
 
         return
             OrderDetail({
                 id: index,
                 order: order,
                 remainingAmount: remainingAmount,
-                currentValue: currentValue,
-                currentPrice: price
+                currentValue: 1e16,
+                currentPrice: 0
             });
     }
 
@@ -138,24 +164,36 @@ contract DCAFacet is ReentrancyGuard {
         DCAOrder storage order = userOrders[msg.sender][index];
         require(
             block.timestamp >= order.nextExecutionTime,
-            "Execution too early"
+            "Too early to execute"
         );
-        require(order.ordersPlaced < order.orderCount, "All orders executed");
-
-        // Transfer partial token
         require(
-            IERC20(order.tokenAddress).transferFrom(
-                msg.sender,
-                address(this),
-                order.amountPerInterval
-            ),
-            "Transfer failed"
+            order.ordersPlaced < order.orderCount,
+            "Order already completed"
         );
+        console.log("Executing DCA for user %s", msg.sender, address(this));
+
+        address[] memory path = new address[](2);
+        path[0] = order.fromToken;
+        path[1] = order.toToken;
+
+        // assuming, contract will always have enough balance to swap
+        IERC20(order.fromToken).approve(uniswapRouter, order.amountPerInterval);
+
+        IUniswapV2Router(uniswapRouter).swapExactTokensForTokens(
+            order.amountPerInterval,
+            0, // ! TODO: may use oracle to avoid impermanent loss
+            path,
+            msg.sender,
+            block.timestamp
+        );
+
         order.ordersPlaced++;
         order.nextExecutionTime += order.interval;
+
         emit DCAExecuted(
             msg.sender,
-            order.tokenAddress,
+            order.fromToken,
+            order.toToken,
             order.amountPerInterval
         );
 
