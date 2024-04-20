@@ -1,14 +1,15 @@
 # Pineapple Finance: DCA + Diamond Architecture Project
 
-This project implements a Decentralized Finance (DeFi) application using a Diamond architecture to facilitate Dollar Cost Averaging (DCA) strategies across various ERC-20 tokens. The system leverages the Diamond standard (EIP-2535) to provide an efficient, upgradable, and flexible structure.
+This project implements a Decentralized Finance (DeFi) application using a Diamond architecture to facilitate Dollar Cost Averaging (DCA) strategies across various ERC-20 tokens. The system leverages the Diamond standard (EIP-2535) for flexibility and upgradability, and Uniswap/Quickswap for token swapping and liquidity management.
 
 ## Overview
 
 The project integrates multiple facets in a diamond architecture to manage different aspects of DCA strategies:
 
-- **DCAFacet**: Manages the lifecycle of DCA orders.
-- **TokenManagementFacet**: Handles interactions with ERC-20 tokens.
+- **DCAFacet**: Manages the lifecycle of DCA orders, including token swaps via Uniswap/Quickswap.
+- **TokenManagementFacet**: Handles ERC-20 token interactions.
 - **PriceAggregatorFacet**: Interfaces with price feed oracles to obtain real-time price data.
+- **PriceFeedRegistry**: Maintains mappings of tokens to their price feeds for real-time price retrieval.
 
 ## Prerequisites
 
@@ -80,6 +81,10 @@ Ensure code consistency using Prettier:
 
 npx prettier --write "contracts/**/*.sol"
 ```
+
+## Using Uniswap/Quickswap in DCAFacet
+
+The DCAFacet integrates with Uniswap/Quickswap to perform token swaps during DCA order execution. It uses the Uniswap/Quickswap Router for token-to-token swaps and interacts with liquidity pools.
 
 ## Interacting with the Deployed Contracts
 
