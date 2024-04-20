@@ -36,10 +36,9 @@ describe("DCA Facet", function () {
     console.log("Allowance set.");
 
     // Check allowance
-    const allowance = await usdcContract.allowance(
-      deployerSigner.address,
-      dcaFacet.address,
-    );
+    const allowance = await usdcContract
+      .connect(deployerSigner as any)
+      .allowance(deployerSigner.address, dcaFacet.address);
     console.log(
       `Allowance set: ${ethers.utils.formatUnits(allowance, 6)} USDC`,
     );

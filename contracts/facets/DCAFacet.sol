@@ -34,8 +34,8 @@ contract DCAFacet is ReentrancyGuard {
 
     address public immutable priceAggregator;
     address public immutable uniswapRouter;
-    uint256 public fees = 250; // 2.5%
-    uint256 public feesDecimals = 10000; // 100%
+    uint256 public constant FEE_DECIMALS = 10000; // Represents 100.00%
+    uint256 public feeRate = 250; // 2.5%
 
     event AllOrdersExecuted(address indexed user, uint256 index);
     event DCASetup(
@@ -61,9 +61,10 @@ contract DCAFacet is ReentrancyGuard {
     }
 
     // TODO: set modifier or make it ownable to only by governer.
-    function setFees(uint256 _fees) external {
-        require(_fees > 0 && _fees <= feesDecimals, "Fees must be 0 >= 100%");
-        fees = _fees;
+    function setFees(uint256 _rate) external {
+        require(_rate > 0 && _rate <= FEE_DECIMALS, "Fees must be 0 >= 100%");
+
+        feeRate = _rate;
     }
 
     function setupDCA(
@@ -88,7 +89,9 @@ contract DCAFacet is ReentrancyGuard {
             IERC20(_fromToken).balanceOf(address(this))
         );
 
-        uint256 amountAfterFees = (_totalAmount * fees) / feesDecimals;
+        uint256 feeAmount = (_totalAmount * feeRate) / FEE_DECIMALS;
+
+        uint256 amountAfterFees = (_totalAmount - feeAmount);
 
         // ! convert fees to native currency so, contract can itself call some functions later.
 
