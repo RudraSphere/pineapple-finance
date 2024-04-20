@@ -15,7 +15,7 @@ async function localFixtures() {
   const dcaFacet = await deployments.deploy("DCAFacet", { from: deployer });
   const tokenManagementFacet = await deployments.deploy(
     "TokenManagementFacet",
-    { from: deployer }
+    { from: deployer },
   );
   const diamondCutFacet = await deployments.deploy("DiamondCutFacet", {
     from: deployer,
@@ -30,31 +30,31 @@ async function localFixtures() {
 
   const dcaFacetFactory: DCAFacet = (await ethers.getContractAt(
     "DCAFacet",
-    dcaFacet.address
+    dcaFacet.address,
   )) as DCAFacet;
   const tokenManagementFacetFactory: TokenManagementFacet =
     (await ethers.getContractAt(
       "TokenManagementFacet",
-      tokenManagementFacet.address
+      tokenManagementFacet.address,
     )) as TokenManagementFacet;
 
   const governanceFacetFactory: DiamondGovernance = (await ethers.getContractAt(
     "DiamondGovernance",
-    diamondGovernance.address
+    diamondGovernance.address,
   )) as DiamondGovernance;
 
   const _dcaSelectors = getSelectors(dcaFacetFactory as unknown as Contract);
   const _tokenManagementSelectors = getSelectors(
-    tokenManagementFacetFactory as unknown as Contract
+    tokenManagementFacetFactory as unknown as Contract,
   );
   const _governanceFacetSelectors = getSelectors(
-    governanceFacetFactory as unknown as Contract
+    governanceFacetFactory as unknown as Contract,
   );
 
   log("Selectors for DCAFacet: ", _dcaSelectors.join(", "));
   log(
     "Selectors for TokenManagementFacet: ",
-    _tokenManagementSelectors.join(", ")
+    _tokenManagementSelectors.join(", "),
   );
 
   // Attach facets to diamond using diamondCut
@@ -78,14 +78,14 @@ async function localFixtures() {
 
   const diamondCut = await ethers.getContractAt(
     "DiamondCutFacet",
-    diamondCutFacet.address
+    diamondCutFacet.address,
   );
   await diamondCut.diamondCut(cuts, ethers.constants.AddressZero, "0x");
 
   // Use Diamond address for facet interaction
   const diamondAsDCAFacet = await ethers.getContractAt(
     "DCAFacet",
-    diamond.address
+    diamond.address,
   );
 
   const signers = await hre.ethers.getSigners();

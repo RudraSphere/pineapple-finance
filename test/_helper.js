@@ -15,7 +15,7 @@ const loadFixture = createFixtureLoader(
     hre.ethers.provider.getSigner(8),
     hre.ethers.provider.getSigner(9),
   ],
-  hre.ethers.provider
+  hre.ethers.provider,
 );
 
 module.exports = {

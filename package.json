@@ -3,7 +3,8 @@
   "scripts": {
     "clean": "rm -rf build crytic-export artifacts cache deployments/local*",
     "prettier:sol": "prettier --write \"contracts/**/*.sol\"",
-    "test": "IS_TEST=true npx hardhat test"
+    "test": "IS_TEST=true npx hardhat test",
+    "prettier": "prettier --write ."
   },
   "dependencies": {
     "@nomiclabs/hardhat-solhint": "^3.0.1",

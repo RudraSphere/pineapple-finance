@@ -11,7 +11,7 @@ import {
 import { getSelectors } from "../utils/getSelectors";
 
 const deployDiamond: DeployFunction = async function (
-  hre: HardhatRuntimeEnvironment
+  hre: HardhatRuntimeEnvironment,
 ) {
   const { deploy, execute, log } = deployments;
   const { deployer } = await getNamedAccounts();
@@ -43,31 +43,31 @@ const deployDiamond: DeployFunction = async function (
 
   const dcaFacetFactory: DCAFacet = (await ethers.getContractAt(
     "DCAFacet",
-    dcaFacetAddress
+    dcaFacetAddress,
   )) as DCAFacet;
   const tokenManagementFacetFactory: TokenManagementFacet =
     (await ethers.getContractAt(
       "TokenManagementFacet",
-      tokenManagementFacetAddress
+      tokenManagementFacetAddress,
     )) as TokenManagementFacet;
 
   const governanceFacetFactory: DiamondGovernance = (await ethers.getContractAt(
     "DiamondGovernance",
-    DiamondGovernance
+    DiamondGovernance,
   )) as DiamondGovernance;
 
   const _dcaSelectors = getSelectors(dcaFacetFactory as unknown as Contract);
   const _tokenManagementSelectors = getSelectors(
-    tokenManagementFacetFactory as unknown as Contract
+    tokenManagementFacetFactory as unknown as Contract,
   );
   const _governanceFacetSelectors = getSelectors(
-    governanceFacetFactory as unknown as Contract
+    governanceFacetFactory as unknown as Contract,
   );
 
   log("Selectors for DCAFacet: ", _dcaSelectors.join(", "));
   log(
     "Selectors for TokenManagementFacet: ",
-    _tokenManagementSelectors.join(", ")
+    _tokenManagementSelectors.join(", "),
   );
 
   // Add facets to diamond
@@ -95,7 +95,7 @@ const deployDiamond: DeployFunction = async function (
     "diamondCut",
     facetCuts,
     ethers.constants.AddressZero,
-    "0x"
+    "0x",
   );
   log("Facets added to Diamond");
 
