@@ -7,14 +7,35 @@ import {
   TokenManagementFacet,
 } from "../typechain-types";
 import { getSelectors } from "../utils/getSelectors";
+import { ROUTERS } from "../utils/polygon.constants";
 
 async function localFixtures() {
-  await deployments.fixture(); // Reset Hardhat deployments
+  await deployments.fixture();
   const { deployer } = await hre.getNamedAccounts();
 
-  const dcaFacet = await deployments.deploy("DCAFacet", { from: deployer });
+  // Deploy PriceFeedRegistry
+  const priceFeedRegistry = await deployments.deploy("PriceFeedRegistry", {
+    from: deployer,
+    log: true,
+  });
+
+  // Deploy PriceAggregator
+  const priceAggregator = await deployments.deploy("PriceAggregator", {
+    from: deployer,
+    args: [priceFeedRegistry.address],
+    log: true,
+  });
+
+  const dcaFacet = await deployments.deploy("DCAFacet", {
+    args: [
+      priceAggregator.address,
+      ROUTERS.QUICKSWAP_V2, // quickswap router v2
+    ],
+    from: deployer,
+  });
   const tokenManagementFacet = await deployments.deploy(
     "TokenManagementFacet",
+
     { from: deployer },
   );
   const diamondCutFacet = await deployments.deploy("DiamondCutFacet", {
