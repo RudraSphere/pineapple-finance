@@ -15,6 +15,8 @@ contract Diamond {
     fallback() external payable {
         console.log("calling this signature:");
         console.logBytes4(msg.sig);
+        console.log("Function Signature called.");
+
         address facet = DiamondCutFacet(diamondCutFacet).getFacetAddress(
             msg.sig
         );

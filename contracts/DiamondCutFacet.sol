@@ -28,6 +28,7 @@ contract DiamondCutFacet is IDiamondCut, DiamondGovernance {
                     if (ds.selectorToFacet[selector] != address(0)) {
                         return;
                     }
+                    // ! TODO: #pending removed for testing purposes, later uncomment this on deployment
                     // require(
                     //     ds.selectorToFacet[selector] == address(0),
                     //     "Selector already added"
