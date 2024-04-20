@@ -28,13 +28,14 @@ const config: HardhatUserConfig = {
     hardhat: {
       chainId: 137,
       allowUnlimitedContractSize: true,
-      // forking: {
-      //   url: "https://rpc.ankr.com/polygon",
-      // },
+      forking: {
+        enabled: true,
+        url: "https://rpc.ankr.com/polygon",
+      },
       // live: true,
       // mining: { auto: true },
-      blockGasLimit: 15000000, // Set to a higher limit
-      gas: 12000000, // Set to a higher limit, optional as Hardhat automatically handles gas
+      // blockGasLimit: 15000000, // Set to a higher limit
+      // gas: 12000000, // Set to a higher limit, optional as Hardhat automatically handles gas
       loggingEnabled: true,
       accounts: {
         mnemonic: process.env.MNEMONICS,
@@ -59,7 +60,7 @@ const config: HardhatUserConfig = {
     apiKey: "59YTKIM92FH2MJCK6IY69A2DV7RX2XVBFX",
   },
   gasReporter: {
-    enabled: true,
+    enabled: false,
     currency: "USD",
     gasPrice: 1e12,
   },
