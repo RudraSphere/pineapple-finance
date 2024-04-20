@@ -9,6 +9,7 @@ import {
   TokenManagementFacet,
 } from "../typechain-types";
 import { getSelectors } from "../utils/getSelectors";
+import { ROUTERS } from "../utils/polygon.constants";
 
 const deployDiamond: DeployFunction = async function (
   hre: HardhatRuntimeEnvironment,
@@ -52,7 +53,10 @@ const deployDiamond: DeployFunction = async function (
   const dcaFacetAddress = (
     await deploy("DCAFacet", {
       from: deployer,
-      args: [priceAggregator.address],
+      args: [
+        priceAggregator.address,
+        ROUTERS.QUICKSWAP_V2, // quickswap router v2
+      ],
       log: true,
     })
   ).address;
