@@ -13,82 +13,108 @@ import { getSelectors } from "../utils/getSelectors";
 const deployDiamond: DeployFunction = async function (
   hre: HardhatRuntimeEnvironment,
 ) {
-  const { deploy, execute, log } = deployments;
+  const { deploy, log, execute, get } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  // deploy facets
-  const dcaFacetAddress = (
-    await deploy("DCAFacet", { from: deployer, log: true })
-  ).address;
-  const tokenManagementFacetAddress = (
-    await deploy("TokenManagementFacet", { from: deployer, log: true })
-  ).address;
+  // Deploy PriceFeedRegistry
+  const priceFeedRegistry = await deploy("PriceFeedRegistry", {
+    from: deployer,
+    log: true,
+  });
+
+  // Deploy PriceAggregator
+  const priceAggregator = await deploy("PriceAggregator", {
+    from: deployer,
+    args: [priceFeedRegistry.address],
+    log: true,
+  });
+
+  // Deploy DiamondCutFacet
   const diamondCutFacet = await deploy("DiamondCutFacet", {
     from: deployer,
     log: true,
   });
-  log(`DiamondCutFacet deployed at ${diamondCutFacet.address}`);
 
-  const DiamondGovernance = await deploy("DiamondGovernance", {
+  // Deploy DiamondGovernance
+  const diamondGovernance = await deploy("DiamondGovernance", {
     from: deployer,
     log: true,
   });
-  log(`DiamondGovernance deployed at ${DiamondGovernance.address}`);
 
-  const Diamond = await deploy("Diamond", {
+  // Deploy Diamond
+  const diamond = await deploy("Diamond", {
     from: deployer,
     args: [diamondCutFacet.address],
     log: true,
   });
 
-  const dcaFacetFactory: DCAFacet = (await ethers.getContractAt(
+  // Deploy DCAFacet with PriceAggregator
+  const dcaFacetAddress = (
+    await deploy("DCAFacet", {
+      from: deployer,
+      args: [priceAggregator.address],
+      log: true,
+    })
+  ).address;
+
+  // Deploy TokenManagementFacet
+  const tokenManagementFacetAddress = (
+    await deploy("TokenManagementFacet", {
+      from: deployer,
+      log: true,
+    })
+  ).address;
+
+  // Retrieve factories for each facet
+  const dcaFacetFactory: DCAFacet = await ethers.getContractAt(
     "DCAFacet",
     dcaFacetAddress,
-  )) as DCAFacet;
+  );
   const tokenManagementFacetFactory: TokenManagementFacet =
-    (await ethers.getContractAt(
+    await ethers.getContractAt(
       "TokenManagementFacet",
       tokenManagementFacetAddress,
-    )) as TokenManagementFacet;
-
-  const governanceFacetFactory: DiamondGovernance = (await ethers.getContractAt(
+    );
+  const governanceFacetFactory: DiamondGovernance = await ethers.getContractAt(
     "DiamondGovernance",
-    DiamondGovernance,
-  )) as DiamondGovernance;
+    diamondGovernance.address,
+  );
 
-  const _dcaSelectors = getSelectors(dcaFacetFactory as unknown as Contract);
-  const _tokenManagementSelectors = getSelectors(
+  // Get selectors for facets
+  const dcaSelectors = getSelectors(dcaFacetFactory as unknown as Contract);
+  const tokenManagementSelectors = getSelectors(
     tokenManagementFacetFactory as unknown as Contract,
   );
-  const _governanceFacetSelectors = getSelectors(
+  const governanceSelectors = getSelectors(
     governanceFacetFactory as unknown as Contract,
   );
 
-  log("Selectors for DCAFacet: ", _dcaSelectors.join(", "));
+  log("Selectors for DCAFacet: ", dcaSelectors.join(", "));
   log(
     "Selectors for TokenManagementFacet: ",
-    _tokenManagementSelectors.join(", "),
+    tokenManagementSelectors.join(", "),
   );
 
-  // Add facets to diamond
+  // Define the cuts for the DiamondCut
   const facetCuts = [
     {
       facetAddress: dcaFacetAddress,
       action: 0,
-      functionSelectors: _dcaSelectors,
+      functionSelectors: dcaSelectors,
     },
     {
       facetAddress: tokenManagementFacetAddress,
       action: 0,
-      functionSelectors: _tokenManagementSelectors,
+      functionSelectors: tokenManagementSelectors,
     },
     {
-      facetAddress: DiamondGovernance.address,
+      facetAddress: diamondGovernance.address,
       action: 0,
-      functionSelectors: _governanceFacetSelectors,
-    }, // Assuming governance facet has functions to manage roles
+      functionSelectors: governanceSelectors,
+    },
   ];
 
+  // Execute the diamond cut
   await execute(
     "DiamondCutFacet",
     { from: deployer },
@@ -97,12 +123,7 @@ const deployDiamond: DeployFunction = async function (
     ethers.constants.AddressZero,
     "0x",
   );
-  log("Facets added to Diamond");
-
-  // await hre.run("verify:verify", {
-  //   address: diamondCutFacet.address,
-  //   constructorArguments: [],
-  // });
+  log("Facets have been successfully added to the Diamond");
 };
 
 export default deployDiamond;
