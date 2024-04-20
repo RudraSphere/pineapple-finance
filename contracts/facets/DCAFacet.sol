@@ -63,6 +63,42 @@ contract DCAFacet is ReentrancyGuard {
         );
     }
 
+    function getOrderDetails(
+        address user,
+        uint index
+    ) public view returns (DCAOrder memory) {
+        require(index < userOrders[user].length, "Order index out of bounds");
+        return userOrders[user][index];
+    }
+
+    function getAllOrders(
+        address user
+    ) public view returns (DCAOrder[] memory) {
+        return userOrders[user];
+    }
+
+    function getActiveOrders(
+        address user
+    ) public view returns (DCAOrder[] memory) {
+        uint activeCount = 0;
+        DCAOrder[] storage orders = userOrders[user];
+        for (uint i = 0; i < orders.length; i++) {
+            if (orders[i].ordersPlaced < orders[i].orderCount) {
+                activeCount++;
+            }
+        }
+
+        DCAOrder[] memory activeOrders = new DCAOrder[](activeCount);
+        uint j = 0;
+        for (uint i = 0; i < orders.length; i++) {
+            if (orders[i].ordersPlaced < orders[i].orderCount) {
+                activeOrders[j] = orders[i];
+                j++;
+            }
+        }
+
+        return activeOrders;
+    }
     function executeDCA(uint index) public {
         DCAOrder storage order = userOrders[msg.sender][index];
         require(
