@@ -6,6 +6,7 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import {
   DCAFacet,
   DiamondGovernance,
+  MultiBatchSwapFacet,
   TokenManagementFacet,
 } from "../typechain-types";
 import { getSelectors } from "../utils/getSelectors";
@@ -69,6 +70,13 @@ const deployDiamond: DeployFunction = async function (
     })
   ).address;
 
+  // Deploy MultiBatchSwap
+  const multiBatchSwap = await deploy("MultiBatchSwapFacet", {
+    from: deployer,
+    args: [ROUTERS.QUICKSWAP_V2, ROUTERS.QUICKSWAP_FACTORY_V2], // Uniswap Router, Uniswap Factory
+    log: true,
+  });
+
   // Retrieve factories for each facet
   const dcaFacetFactory: DCAFacet = await ethers.getContractAt(
     "DCAFacet",
@@ -83,9 +91,16 @@ const deployDiamond: DeployFunction = async function (
     "DiamondGovernance",
     diamondGovernance.address,
   );
+  const batchSwapFactory: MultiBatchSwapFacet = await ethers.getContractAt(
+    "MultiBatchSwapFacet",
+    multiBatchSwap.address,
+  );
 
   // Get selectors for facets
   const dcaSelectors = getSelectors(dcaFacetFactory as unknown as Contract);
+  const batchSwapSelectors = getSelectors(
+    batchSwapFactory as unknown as Contract,
+  );
   const tokenManagementSelectors = getSelectors(
     tokenManagementFacetFactory as unknown as Contract,
   );
@@ -115,6 +130,11 @@ const deployDiamond: DeployFunction = async function (
       facetAddress: diamondGovernance.address,
       action: 0,
       functionSelectors: governanceSelectors,
+    },
+    {
+      facetAddress: multiBatchSwap.address,
+      action: 0,
+      functionSelectors: batchSwapSelectors,
     },
   ];
 
