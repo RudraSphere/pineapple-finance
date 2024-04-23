@@ -126,6 +126,8 @@ contract DCAFacet is ReentrancyGuard {
         DCAOrder storage order = userOrders[user][index];
         uint256 remainingOrders = order.orderCount - order.ordersPlaced;
         uint256 remainingAmount = remainingOrders * order.amountPerInterval;
+
+        // ! TODO: #pending: will need to provide it with oracle contracts first.
         // int price = IAggregatorV3(priceAggregator).getLatestPrice(
         //     order.tokenAddress
         // );
