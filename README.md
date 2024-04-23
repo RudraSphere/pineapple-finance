@@ -6,6 +6,7 @@ This project implements a Decentralized Finance (DeFi) application using a Diamo
 
 The project integrates multiple facets in a diamond architecture to manage different aspects of DCA strategies:
 
+- **MultiBatchSwapFacet**: Allows for batch token swaps, enabling users to swap multiple tokens in a single trensaction .
 - **DCAFacet**: Manages the lifecycle of DCA orders, including token swaps via Uniswap/Quickswap.
 - **TokenManagementFacet**: Handles ERC-20 token interactions.
 - **PriceAggregatorFacet**: Interfaces with price feed oracles to obtain real-time price data.
@@ -88,6 +89,32 @@ The DCAFacet integrates with Uniswap/Quickswap to perform token swaps during DCA
 
 ## Interacting with the Deployed Contracts
 
+## Using MultiBatchSwapFacet
+
+The MultiBatchSwapFacet enables batch token swaps, providing flexibility in swap routes and allowing for multi-hop swaps. This can be useful when direct swap routes don't exist, enabling a more complex swap logic.
+
+### Setting Up the Swap
+
+Use the `batchSwapsToSingleToken` function to swap multiple tokens in one transaction:
+Use the `batchSwapToSingleToken` function to swap single tokens in one transaction with Hop route if it does not exists:
+
+````solidity
+function batchSwapsToSingleToken(
+    address[] memory inputTokens,
+        uint256[] memory inputAmounts,
+        address outputToken,
+        address recipient,
+        uint256 slippageTolerance
+) external;
+
+function batchSwapToSingleToken(
+        address fromToken,
+        address toToken,
+        uint256 amount,
+        address recipient
+    ) external;
+```
+
 - Setting up a DCA Order: Use the setupDCA function to initiate a new DCA order.
 
 ```solidity
@@ -98,7 +125,7 @@ function setupDCA(
     uint256 _interval,
     uint256 _orderCount
 ) external;
-```
+````
 
 - Executing a DCA Order: Manually or automatically trigger the execution of DCA orders.
 
