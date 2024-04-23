@@ -4,6 +4,7 @@ import hre, { deployments, ethers } from "hardhat";
 import {
   DCAFacet,
   DiamondGovernance,
+  MultiBatchSwapFacet,
   TokenManagementFacet,
 } from "../typechain-types";
 import { getSelectors } from "../utils/getSelectors";
@@ -38,6 +39,14 @@ async function localFixtures() {
 
     { from: deployer },
   );
+
+  // Deploy MultiBatchSwap
+  const multiBatchSwap = await deployments.deploy("MultiBatchSwapFacet", {
+    from: deployer,
+    args: [ROUTERS.QUICKSWAP_V2, ROUTERS.QUICKSWAP_FACTORY_V2], // Uniswap Router, Uniswap Factory
+    log: true,
+  });
+
   const diamondCutFacet = await deployments.deploy("DiamondCutFacet", {
     from: deployer,
   });
@@ -49,10 +58,18 @@ async function localFixtures() {
     from: deployer,
   });
 
+  const batchSwapFactory: MultiBatchSwapFacet = (await ethers.getContractAt(
+    "MultiBatchSwapFacet",
+    multiBatchSwap.address,
+  )) as MultiBatchSwapFacet;
+
   const dcaFacetFactory: DCAFacet = (await ethers.getContractAt(
     "DCAFacet",
     dcaFacet.address,
   )) as DCAFacet;
+  const batchSwapSelectors = getSelectors(
+    batchSwapFactory as unknown as Contract,
+  );
   const tokenManagementFacetFactory: TokenManagementFacet =
     (await ethers.getContractAt(
       "TokenManagementFacet",
@@ -95,6 +112,11 @@ async function localFixtures() {
       action: 0,
       functionSelectors: _governanceFacetSelectors,
     },
+    {
+      facetAddress: multiBatchSwap.address,
+      action: 0,
+      functionSelectors: batchSwapSelectors,
+    },
   ];
 
   const diamondCut = await ethers.getContractAt(
@@ -109,9 +131,15 @@ async function localFixtures() {
     diamond.address,
   );
 
+  const diamondAsBatchSwapFacet = await ethers.getContractAt(
+    "MultiBatchSwapFacet",
+    diamond.address,
+  );
+
   const signers = await hre.ethers.getSigners();
   return {
     dcaFacet: diamondAsDCAFacet,
+    multiBatchSwapFacet: diamondAsBatchSwapFacet,
     governor: signers[0],
     // Add other roles/signers as needed
   };
