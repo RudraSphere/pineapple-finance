@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "../interfaces/IUniswapV2Router.sol";
 import "../interfaces/IUniswapV2Factory.sol";
+import "hardhat/console.sol";
 
 contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
     using SafeERC20 for IERC20;
@@ -50,6 +51,9 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
         );
 
         for (uint256 i = 0; i < inputTokens.length; i++) {
+            console.log("Swapping token %s", inputTokens[i]);
+            console.log("Amount %s", inputAmounts[i]);
+
             address inputToken = inputTokens[i];
             uint256 inputAmount = inputAmounts[i];
 
@@ -58,11 +62,16 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
                 address(this),
                 inputAmount
             );
+            console.log("Transferred %s", inputAmount);
 
             uint256 feeAmount = (inputAmount * feeBasisPoints) / BPS_DIVISOR;
             uint256 swapAmount = inputAmount - feeAmount;
 
+            console.log("Fee amount %s", feeAmount);
+            console.log("Swap amount %s", swapAmount);
+
             _collectFees(inputToken, feeAmount);
+            console.log("Fees collected");
 
             IERC20(inputToken).safeApprove(address(uniswapRouter), swapAmount);
 
@@ -70,11 +79,13 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
             path[0] = inputToken;
             path[1] = outputToken;
 
+            console.log("Swapping %s to %s", inputToken, outputToken);
             uint256[] memory amountsOut = uniswapRouter
                 .swapExactTokensForTokens(
                     swapAmount,
-                    (swapAmount * (BPS_DIVISOR - slippageTolerance)) /
-                        BPS_DIVISOR, // May need to check it.
+                    // (swapAmount * (BPS_DIVISOR - slippageTolerance)) /
+                    //     BPS_DIVISOR, // May need to check it.
+                    0,
                     path,
                     recipient,
                     block.timestamp
@@ -153,8 +164,10 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
 
     function _collectFees(address token, uint256 feeAmount) internal {
         address feeCollector = owner();
-        IERC20(token).safeTransfer(feeCollector, feeAmount);
-        emit FeesCollected(feeCollector, feeAmount);
+        if (feeCollector != address(0)) {
+            IERC20(token).safeTransfer(feeCollector, feeAmount);
+            emit FeesCollected(feeCollector, feeAmount);
+        }
     }
 
     function setFeeBasisPoints(uint256 newFeeBPS) external onlyOwner {
