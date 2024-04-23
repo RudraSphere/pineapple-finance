@@ -5,5 +5,5 @@ interface IUniswapV2Factory {
     function getPair(
         address _inputToken,
         address _outputToken
-    ) external returns (address);
+    ) external view returns (address);
 }

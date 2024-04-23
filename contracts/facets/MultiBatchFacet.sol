@@ -162,4 +162,35 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
 
         feeBasisPoints = newFeeBPS;
     }
+
+    function findBestSwapPath(
+        address fromToken,
+        address toToken
+    ) internal view returns (address[] memory) {
+        address directPair = uniswapFactory.getPair(fromToken, toToken);
+
+        if (directPair != address(0)) {
+            // Direct swap
+            address[] memory directPath = new address[](2);
+            directPath[0] = fromToken;
+            directPath[1] = toToken;
+            return directPath;
+        } else {
+            // Multi-hop
+            address[] memory multiHopPath = new address[](3);
+            multiHopPath[0] = fromToken;
+            multiHopPath[1] = findIntermediateToken(fromToken, toToken);
+            multiHopPath[2] = toToken;
+            return multiHopPath;
+        }
+    }
+
+    function estimateSwapOutput(
+        address fromToken,
+        address toToken,
+        uint256 inputAmount
+    ) public view returns (uint256[] memory) {
+        address[] memory path = findBestSwapPath(fromToken, toToken);
+        return uniswapRouter.getAmountsOut(inputAmount, path);
+    }
 }
