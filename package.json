@@ -1,6 +1,7 @@
 {
   "name": "Pineapple",
   "scripts": {
+    "nodeWithoutDeploy": "npx hardhat node --no-deploy",
     "clean": "rm -rf build crytic-export artifacts cache deployments/local*",
     "prettier:sol": "prettier --write \"contracts/**/*.sol\"",
     "test": "IS_TEST=true npx hardhat test",
