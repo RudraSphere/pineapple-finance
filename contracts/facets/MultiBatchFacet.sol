@@ -6,17 +6,23 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "../interfaces/IUniswapV2Router.sol";
+import "../interfaces/IUniswapV2Factory.sol";
 
 contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
     using SafeERC20 for IERC20;
 
     IUniswapV2Router public immutable uniswapRouter;
+    IUniswapV2Factory public immutable uniswapFactory;
 
     uint256 public feeBasisPoints = 250; // 2.5%
     uint256 public constant BPS_DIVISOR = 10_000;
 
-    constructor(address _uniswapRouter) {
+    constructor(address _uniswapRouter, address _uniswapFactory) {
+        require(_uniswapRouter != address(0), "ERR::ZERO_ADDRESS::ROUTER");
+        require(_uniswapFactory != address(0), "ERR::ZERO_ADDRESS::FACTORY");
+
         uniswapRouter = IUniswapV2Router(_uniswapRouter);
+        uniswapFactory = IUniswapV2Factory(_uniswapFactory);
     }
 
     event TokensSwapped(
@@ -31,7 +37,7 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
 
     event FeesCollected(address indexed collector, uint256 feeAmount);
 
-    function advancedBatchSwap(
+    function batchSwapsToSingleToken(
         address[] memory inputTokens,
         uint256[] memory inputAmounts,
         address outputToken,
@@ -68,7 +74,7 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
                 .swapExactTokensForTokens(
                     swapAmount,
                     (swapAmount * (BPS_DIVISOR - slippageTolerance)) /
-                        BPS_DIVISOR,
+                        BPS_DIVISOR, // May need to check it.
                     path,
                     recipient,
                     block.timestamp
@@ -84,6 +90,65 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
                 slippageTolerance
             );
         }
+    }
+
+    function batchSwapToSingleToken(
+        address fromToken,
+        address toToken,
+        uint256 amount,
+        address recipient
+    ) external nonReentrant {
+        IERC20(fromToken).safeApprove(address(uniswapRouter), amount);
+        address _directPair = uniswapFactory.getPair(fromToken, toToken);
+        address[] memory path;
+
+        if (_directPair != address(0)) {
+            // if direct pair exists
+            path = new address[](2);
+            path[0] = fromToken;
+            path[1] = toToken;
+        } else {
+            path = determineSwapPath(fromToken, toToken);
+        }
+
+        uint256[] memory amountsOut = uniswapRouter.swapExactTokensForTokens(
+            amount,
+            0, // TODO: calculate or use Dex's function
+            path,
+            recipient,
+            block.timestamp
+        );
+
+        emit TokensSwapped(
+            msg.sender,
+            fromToken,
+            toToken,
+            amount,
+            amountsOut[amountsOut.length - 1],
+            tx.gasprice,
+            0 // for now
+        );
+    }
+
+    function determineSwapPath(
+        address fromToken,
+        address toToken
+    ) internal view returns (address[] memory) {
+        address[] memory path = new address[](3);
+        address intermediateToken = findIntermediateToken(fromToken, toToken);
+
+        path[0] = fromToken;
+        path[1] = intermediateToken;
+        path[2] = toToken;
+
+        return path;
+    }
+
+    function findIntermediateToken(
+        address fromToken,
+        address toToken
+    ) internal pure returns (address) {
+        return 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359; // USDC for now
     }
 
     function _collectFees(address token, uint256 feeAmount) internal {
