@@ -97,6 +97,15 @@ npm run prettier
 npm run clean
 ```
 
+## Get USDC / SHIB coins for testing on Polygon Fork via impersonating
+
+```bash
+# for USDC
+npx hardhat run scripts/getUsdc.ts --network localhost
+# for SHIB
+npx hardhat run scripts/getShib.ts --network localhost
+```
+
 ## Using Uniswap/Quickswap in DCAFacet
 
 The DCAFacet integrates with Uniswap/Quickswap to perform token swaps during DCA order execution. It uses the Uniswap/Quickswap Router for token-to-token swaps and interacts with liquidity pools.
