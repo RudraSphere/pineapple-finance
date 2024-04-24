@@ -1,6 +1,6 @@
-# Pineapple Finance: DCA + Diamond Architecture Project
+# Pineapple Finance: DCA + MultiBatch swap with Diamond Architecture Personal Project
 
-This project implements a Decentralized Finance (DeFi) application using a Diamond architecture to facilitate Dollar Cost Averaging (DCA) strategies across various ERC-20 tokens. The system leverages the Diamond standard (EIP-2535) for flexibility and upgradability, and Uniswap/Quickswap for token swapping and liquidity management.
+This project implements a Decentralized Finance (DeFi) application using a Diamond architecture to facilitate Dollar Cost Averaging (DCA) strategies across various ERC-20 tokens and MultiBatch Swap Facet to reduce gas using Diamond. The system leverages the Diamond standard (EIP-2535) for flexibility and upgradability, and Uniswap/Quickswap for token swapping and liquidity management.
 
 ## Overview
 
@@ -15,19 +15,18 @@ The project integrates multiple facets in a diamond architecture to manage diffe
 ## Prerequisites
 
 - Node.js (v14.x or later)
-- npm or Yarn
+- npm or Yarn or Bun
 - Hardhat
 - Solidity (v0.8.x)
 - OpenZeppelin Contracts
-- An Ethereum wallet with testnet/mainnet ETH and a Web3 provider (e.g., MetaMask)
 
 ## Installation
 
 Clone the repository and install the dependencies:
 
 ```bash
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
+git clone https://github.com/RudraSphere/pineapple-finance.git
+cd pineapple-finance
 npm install
 ```
 
@@ -44,9 +43,16 @@ bun install --clean
 Create a .env file at the root of the project directory and populate it with the necessary environment variables:
 
 ```plaintext
-PRIVATE_KEY=your-wallet-private-key
-INFURA_API_KEY=your-infura-api-key
-ALCHEMY_API_KEY=your-alchemy-api-key
+PK=your-wallet-private-key
+MNEMONICS=
+```
+
+## Run Polygon Forked Node
+
+Run Node in different terminal w/o deploying (this Project uses a Polygon fork):
+
+```bash
+npx hardhat node --no-deploy
 ```
 
 ## Compiling Contracts
@@ -62,7 +68,7 @@ npx hardhat compile
 Deploy the contracts to a local testnet or to a live network:
 
 ```bash
-npx hardhat run scripts/deploy.js --network rinkeby
+npx hardhat deploy --network localhost
 ```
 
 ## Running Tests
@@ -71,7 +77,7 @@ Execute the test suite to ensure the contracts function as expected:
 
 ```bash
 
-npx hardhat test
+npx hardhat test --grep "" --network localhost
 ```
 
 ## Code Formatting
@@ -81,6 +87,14 @@ Ensure code consistency using Prettier:
 ```bash
 
 npx prettier --write "contracts/**/*.sol"
+# OR
+npm run prettier
+```
+
+## Remove deployed contracts + artifacts + type-chain
+
+```bash
+npm run clean
 ```
 
 ## Using Uniswap/Quickswap in DCAFacet
@@ -113,7 +127,7 @@ function batchSwapToSingleToken(
         uint256 amount,
         address recipient
     ) external;
-```
+````
 
 - Setting up a DCA Order: Use the setupDCA function to initiate a new DCA order.
 
