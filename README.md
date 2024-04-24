@@ -6,10 +6,10 @@ This project implements a Decentralized Finance (DeFi) application using a Diamo
 
 The project integrates multiple facets in a diamond architecture to manage different aspects of DCA strategies:
 
-- **MultiBatchSwapFacet**: Allows for batch token swaps, enabling users to swap multiple tokens in a single trensaction .
-- **DCAFacet**: Manages the lifecycle of DCA orders, including token swaps via Uniswap/Quickswap.
+- [WIP] **MultiBatchSwapFacet**: Allows for batch token swaps, enabling users to swap multiple tokens in a single trensaction .
+- [WIP] **DCAFacet**: Manages the lifecycle of DCA orders, including token swaps via Uniswap/Quickswap.
 - **TokenManagementFacet**: Handles ERC-20 token interactions.
-- **PriceAggregatorFacet**: Interfaces with price feed oracles to obtain real-time price data.
+- [WIP] **PriceAggregatorFacet**: Interfaces with price feed oracles to obtain real-time price data.
 - **PriceFeedRegistry**: Maintains mappings of tokens to their price feeds for real-time price retrieval.
 
 ## Prerequisites
