@@ -30,7 +30,7 @@ const config: HardhatUserConfig = {
       allowUnlimitedContractSize: true,
       forking: {
         enabled: true,
-        url: "https://rpc.ankr.com/polygon",
+        url: "https://1rpc.io/matic",
       },
       // live: true,
       // mining: { auto: true },
@@ -47,7 +47,7 @@ const config: HardhatUserConfig = {
       },
     },
     internalRPC: {
-      url: "https://ankit5577.eu.org/",
+      url: "http://ec2-65-2-170-179.ap-south-1.compute.amazonaws.com:8545/", // alerts.medicoeye (polygon forked)
       accounts: [process.env.PK || ""],
       allowUnlimitedContractSize: true,
       // blockGasLimit: 1e5,
