@@ -2,6 +2,11 @@
 
 This project implements a Decentralized Finance (DeFi) application using a Diamond architecture to facilitate Dollar Cost Averaging (DCA) strategies across various ERC-20 tokens and MultiBatch Swap Facet to reduce gas using Diamond. The system leverages the Diamond standard (EIP-2535) for flexibility and upgradability, and Uniswap/Quickswap for token swapping and liquidity management.
 
+# Live URL
+
+dApp is hosted on Cloudflare using Static Site Generation
+preview: https://pineapple-finance.pages.dev/
+
 ## Overview
 
 The project integrates multiple facets in a diamond architecture to manage different aspects of DCA strategies:
@@ -12,6 +17,11 @@ The project integrates multiple facets in a diamond architecture to manage diffe
 - [WIP] **PriceAggregatorFacet**: Interfaces with price feed oracles to obtain real-time price data.
 - **PriceFeedRegistry**: Maintains mappings of tokens to their price feeds for real-time price retrieval.
 
+## Project Structure
+
+- core: Contains Hardhat and contract-related code.
+- app: Contains frontend code built with Next.js.
+
 ## Prerequisites
 
 - Node.js (v14.x or later)
@@ -19,6 +29,7 @@ The project integrates multiple facets in a diamond architecture to manage diffe
 - Hardhat
 - Solidity (v0.8.x)
 - OpenZeppelin Contracts
+- Next.js (v14 or later)
 
 ## Installation
 
@@ -27,7 +38,14 @@ Clone the repository and install the dependencies:
 ```bash
 git clone https://github.com/RudraSphere/pineapple-finance.git
 cd pineapple-finance
-npm install
+
+# for CORE / HARDHAT / CONTRACTS
+cd core
+npm install -f
+
+# for dAPP / NextJS
+cd app
+npm install -f
 ```
 
 or using Yarn or Bun
@@ -121,7 +139,7 @@ The MultiBatchSwapFacet enables batch token swaps, providing flexibility in swap
 Use the `batchSwapsToSingleToken` function to swap multiple tokens in one transaction:
 Use the `batchSwapToSingleToken` function to swap single tokens in one transaction with Hop route if it does not exists:
 
-````solidity
+```solidity
 function batchSwapsToSingleToken(
     address[] memory inputTokens,
         uint256[] memory inputAmounts,
@@ -136,7 +154,7 @@ function batchSwapToSingleToken(
         uint256 amount,
         address recipient
     ) external;
-````
+```
 
 - Setting up a DCA Order: Use the setupDCA function to initiate a new DCA order.
 
@@ -148,7 +166,7 @@ function setupDCA(
     uint256 _interval,
     uint256 _orderCount
 ) external;
-````
+```
 
 - Executing a DCA Order: Manually or automatically trigger the execution of DCA orders.
 
