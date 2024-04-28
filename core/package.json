@@ -1,0 +1,51 @@
+{
+  "name": "Pineapple",
+  "scripts": {
+    "nodeWithoutDeploy": "npx hardhat node --no-deploy",
+    "clean": "rm -rf build crytic-export artifacts cache deployments/local*",
+    "prettier:sol": "prettier --write \"contracts/**/*.sol\"",
+    "test": "IS_TEST=true npx hardhat test",
+    "prettier": "prettier --write ."
+  },
+  "dependencies": {
+    "@nomiclabs/hardhat-solhint": "^3.0.1",
+    "@openzeppelin/contracts": "^4.9.3",
+    "@openzeppelin/contracts-upgradeable": "^4.9.3",
+    "@openzeppelin/hardhat-upgrades": "^2.3.1",
+    "@remix-project/remixd": "^0.6.17",
+    "dotenv": "^16.3.1",
+    "ethereum-waffle": "^4.0.10",
+    "hardhat-contract-sizer": "^2.10.0",
+    "hardhat-deploy": "^0.11.37",
+    "hardhat-deploy-ethers": "*",
+    "lodash": "^4.17.21",
+    "solc": "^0.8.21",
+    "web3-utils": "^4.0.5"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",
+    "@nomicfoundation/hardhat-ethers": "*",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.9",
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@nomicfoundation/hardhat-verify": "^1.1.1",
+    "@nomiclabs/hardhat-ethers": "*",
+    "@typechain/ethers-v5": "*",
+    "@typechain/hardhat": "^8.0.3",
+    "@types/node": "^20.12.7",
+    "@typescript-eslint/eslint-plugin": "^6.5.0",
+    "@typescript-eslint/parser": "^6.5.0",
+    "chai": "^4.3.8",
+    "eslint": "^8.48.0",
+    "ethers": "^5",
+    "hardhat": "^2.17.2",
+    "hardhat-gas-reporter": "^1.0.9",
+    "prettier": "^3.2.5",
+    "prettier-plugin-solidity": "^1.3.1",
+    "solidity-coverage": "^0.8.4",
+    "ts-node": "^10.9.2",
+    "typechain": "^8.3.1",
+    "typescript": "^5.4.5"
+  },
+  "author": "Ankit5577",
+  "license": "LGPL-3.0-or-later"
+}
