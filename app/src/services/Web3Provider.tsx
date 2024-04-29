@@ -10,7 +10,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import { metaMaskWallet } from "@rainbow-me/rainbowkit/wallets";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { WagmiProvider } from "wagmi";
+import { WagmiProvider, createStorage } from "wagmi";
 import { polygon } from "wagmi/chains";
 
 const polygonForkedInternalRpc = {
@@ -35,8 +35,10 @@ const polygonForkedInternalRpc = {
   },
 } as const satisfies Chain;
 
-const config = getDefaultConfig({
+export const config = getDefaultConfig({
   appName: "Pineapple Finance",
+  storage: createStorage({ storage: window.localStorage }),
+  batch: { multicall: true },
   wallets: [
     {
       groupName: "Recommended",
@@ -46,6 +48,7 @@ const config = getDefaultConfig({
   projectId: "XXXXX",
   chains: [polygonForkedInternalRpc],
   ssr: false,
+  pollingInterval: 10_000,
 });
 
 const queryClient = new QueryClient();
