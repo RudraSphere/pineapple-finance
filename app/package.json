@@ -31,21 +31,21 @@
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^9.0.1",
     "viem": "2.x",
-    "wagmi": "latest"
+    "wagmi": "^2.7.0"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
     "cross-env": "^7.0.3",
-    "postcss": "^8",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.3",
     "eslint-plugin-tailwindcss": "^3.14.3",
+    "postcss": "^8",
     "prettier": "^3.1.1",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.3"
+    "typescript": "^5"
   }
 }

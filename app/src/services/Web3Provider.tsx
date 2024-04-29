@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { WagmiProvider, createStorage } from 'wagmi'
 import { polygon } from 'wagmi/chains'
+import { WagmiContractsProvider } from './ContractsWagmiProvider'
 
 const polygonForkedInternalRpc = {
   id: 8999,
@@ -107,15 +108,17 @@ const Web3Provider = ({ children }) => {
 
   return (
     <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider
-          showRecentTransactions={true}
-          theme={darkTheme({ overlayBlur: 'small' })}
-          modalSize='compact'
-        >
-          {children}
-        </RainbowKitProvider>
-      </QueryClientProvider>
+      <WagmiContractsProvider>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitProvider
+            showRecentTransactions={true}
+            theme={darkTheme({ overlayBlur: 'small' })}
+            modalSize='compact'
+          >
+            {children}
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiContractsProvider>
     </WagmiProvider>
   )
 }
