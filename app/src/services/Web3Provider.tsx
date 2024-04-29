@@ -84,8 +84,8 @@ const Web3Provider = ({ children }) => {
                   chainId: "0x2327",
                   chainName: polygonForkedInternalRpc.name,
                   nativeCurrency: {
-                    name: "BNB",
-                    symbol: "BNB",
+                    name: "Matic",
+                    symbol: "MATIC",
                     decimals: 18,
                   },
                   rpcUrls: polygonForkedInternalRpc.rpcUrls.default.http,
