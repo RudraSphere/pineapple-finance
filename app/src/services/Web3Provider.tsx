@@ -51,7 +51,7 @@ const config = getDefaultConfig({
 const queryClient = new QueryClient();
 
 const Web3Provider = ({ children }) => {
-  const provider = window && window.ethereum;
+  const provider = typeof window !== "undefined" && window.ethereum;
   if (!provider) {
     console.log("Metamask is not installed, please install!");
   }
