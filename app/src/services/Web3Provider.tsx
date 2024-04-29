@@ -69,7 +69,7 @@ const Web3Provider = ({ children }) => {
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: '0x2327' }],
         })
-        console.log('You have succefully switched to Binance Test network')
+        console.log('You have succefully switched')
       } catch (switchError) {
         if (switchError.code === 4902) {
           console.log('This network is not available in your metamask, please add it')
