@@ -12,7 +12,7 @@ import "hardhat/console.sol";
 contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
     using SafeERC20 for IERC20;
 
-    IUniswapV2Router public immutable uniswapRouter;
+    IUniswapV2Router public immutable quickswapRouter;
     IUniswapV2Factory public immutable uniswapFactory;
 
     uint256 public feeBasisPoints = 250; // 2.5%
@@ -22,7 +22,7 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
         require(_uniswapRouter != address(0), "ERR::ZERO_ADDRESS::ROUTER");
         require(_uniswapFactory != address(0), "ERR::ZERO_ADDRESS::FACTORY");
 
-        uniswapRouter = IUniswapV2Router(_uniswapRouter);
+        quickswapRouter = IUniswapV2Router(_uniswapRouter);
         uniswapFactory = IUniswapV2Factory(_uniswapFactory);
     }
 
@@ -45,6 +45,7 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
         address recipient,
         uint256 slippageTolerance
     ) external nonReentrant {
+        console.log("call init");
         require(
             inputTokens.length == inputAmounts.length,
             "Input lengths mismatch"
@@ -73,14 +74,17 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
             _collectFees(inputToken, feeAmount);
             console.log("Fees collected");
 
-            IERC20(inputToken).safeApprove(address(uniswapRouter), swapAmount);
+            IERC20(inputToken).safeApprove(
+                address(quickswapRouter),
+                swapAmount
+            );
 
             address[] memory path = new address[](2);
             path[0] = inputToken;
             path[1] = outputToken;
 
             console.log("Swapping %s to %s", inputToken, outputToken);
-            uint256[] memory amountsOut = uniswapRouter
+            uint256[] memory amountsOut = quickswapRouter
                 .swapExactTokensForTokens(
                     swapAmount,
                     // (swapAmount * (BPS_DIVISOR - slippageTolerance)) /
@@ -88,8 +92,16 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
                     0,
                     path,
                     recipient,
-                    block.timestamp
+                    (block.timestamp * 2)
                 );
+
+            console.log("Swapped %s to %s", inputToken, outputToken);
+            console.log(
+                "receipient balance after swap ",
+                IERC20(outputToken).balanceOf(recipient),
+                recipient
+            );
+            console.log(IERC20(inputToken).balanceOf(recipient));
 
             emit TokensSwapped(
                 msg.sender,
@@ -109,9 +121,21 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
         uint256 amount,
         address recipient
     ) external nonReentrant {
-        IERC20(fromToken).safeApprove(address(uniswapRouter), amount);
+        console.log("calling batchSwapToSingleToken");
+        IERC20(fromToken).safeApprove(address(quickswapRouter), amount);
         address _directPair = uniswapFactory.getPair(fromToken, toToken);
+        console.log("direct pair %s", _directPair);
         address[] memory path;
+        console.log(
+            "receipient balance::Before:",
+            IERC20(toToken).balanceOf(recipient)
+        );
+        console.log(
+            "receipient balance::Before:",
+            IERC20(fromToken).balanceOf(recipient)
+        );
+
+        IERC20(fromToken).safeTransferFrom(msg.sender, address(this), amount);
 
         if (_directPair != address(0)) {
             // if direct pair exists
@@ -122,14 +146,23 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
             path = determineSwapPath(fromToken, toToken);
         }
 
-        uint256[] memory amountsOut = uniswapRouter.swapExactTokensForTokens(
+        uint256[] memory amountsOut = quickswapRouter.swapExactTokensForTokens(
             amount,
             0, // TODO: calculate or use Dex's function
             path,
             recipient,
-            block.timestamp
+            (block.timestamp * 3)
         );
 
+        console.log("Swapped %s to %s", fromToken, toToken);
+        console.log(
+            "receipient balance::After:",
+            IERC20(toToken).balanceOf(recipient)
+        );
+        console.log(
+            "receipient balance::After:",
+            IERC20(fromToken).balanceOf(recipient)
+        );
         emit TokensSwapped(
             msg.sender,
             fromToken,
@@ -204,6 +237,6 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
         uint256 inputAmount
     ) public view returns (uint256[] memory) {
         address[] memory path = findBestSwapPath(fromToken, toToken);
-        return uniswapRouter.getAmountsOut(inputAmount, path);
+        return quickswapRouter.getAmountsOut(inputAmount, path);
     }
 }

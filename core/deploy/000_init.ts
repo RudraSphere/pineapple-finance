@@ -5,7 +5,6 @@ import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import {
   DCAFacet,
-  DiamondGovernance,
   MultiBatchSwapFacet,
   TokenManagementFacet,
 } from "../typechain-types";
@@ -37,16 +36,21 @@ const deployDiamond: DeployFunction = async function (
     log: true,
   });
 
-  // Deploy DiamondGovernance
-  const diamondGovernance = await deploy("DiamondGovernance", {
-    from: deployer,
-    log: true,
-  });
+  // // Deploy DiamondGovernance
+  // const diamondGovernance = await deploy("DiamondGovernance", {
+  //   from: deployer,
+  //   log: true,
+  // });
 
   // Deploy Diamond
   const diamond = await deploy("Diamond", {
     from: deployer,
-    args: [diamondCutFacet.address],
+    args: [deployer, diamondCutFacet.address],
+    log: true,
+  });
+
+  const diamondInitDeployment = await deploy("DiamondInit", {
+    from: deployer,
     log: true,
   });
 
@@ -87,10 +91,10 @@ const deployDiamond: DeployFunction = async function (
       "TokenManagementFacet",
       tokenManagementFacetAddress,
     );
-  const governanceFacetFactory: DiamondGovernance = await ethers.getContractAt(
-    "DiamondGovernance",
-    diamondGovernance.address,
-  );
+  // const governanceFacetFactory: DiamondGovernance = await ethers.getContractAt(
+  //   "DiamondGovernance",
+  //   diamondGovernance.address,
+  // );
   const batchSwapFactory: MultiBatchSwapFacet = await ethers.getContractAt(
     "MultiBatchSwapFacet",
     multiBatchSwap.address,
@@ -104,9 +108,9 @@ const deployDiamond: DeployFunction = async function (
   const tokenManagementSelectors = getSelectors(
     tokenManagementFacetFactory as unknown as Contract,
   );
-  const governanceSelectors = getSelectors(
-    governanceFacetFactory as unknown as Contract,
-  );
+  // const governanceSelectors = getSelectors(
+  //   governanceFacetFactory as unknown as Contract,
+  // );
 
   log("Selectors for DCAFacet: ", dcaSelectors.join(", "));
   log(
@@ -121,33 +125,61 @@ const deployDiamond: DeployFunction = async function (
       action: 0,
       functionSelectors: dcaSelectors,
     },
-    {
-      facetAddress: tokenManagementFacetAddress,
-      action: 0,
-      functionSelectors: tokenManagementSelectors,
-    },
-    {
-      facetAddress: diamondGovernance.address,
-      action: 0,
-      functionSelectors: governanceSelectors,
-    },
+    // {
+    //   facetAddress: tokenManagementFacetAddress,
+    //   action: 0,
+    //   functionSelectors: tokenManagementSelectors,
+    // },
+    // {
+    //   facetAddress: diamondGovernance.address,
+    //   action: 0,
+    //   functionSelectors: governanceSelectors,
+    // },
     {
       facetAddress: multiBatchSwap.address,
       action: 0,
       functionSelectors: batchSwapSelectors,
     },
   ];
+  // all function selectors console
+  log("\n\nSelectors for dca: ", ...dcaSelectors);
+
+  log("\n\nSelectors for batchSwapSelectors: ", ...batchSwapSelectors);
+
+  const diamondInitContract = await ethers.getContractAt(
+    "DiamondInit",
+    diamondInitDeployment.address,
+  );
+
+  const diamondCut = await ethers.getContractAt("IDiamondCut", diamond.address);
+
+  let tx;
+  let receipt;
+  // call to init function
+  let functionCall = diamondInitContract.interface.encodeFunctionData("init");
+  tx = await diamondCut.diamondCut(
+    facetCuts,
+    diamondInitContract.address,
+    functionCall,
+  );
+  console.log("Diamond cut tx: ", tx.hash);
+  receipt = await tx.wait();
+  if (!receipt.status) {
+    throw Error(`Diamond upgrade failed: ${tx.hash}`);
+  }
+  console.log("Completed diamond cut");
+  log("Facets have been successfully added to the Diamond");
 
   // Execute the diamond cut
-  await execute(
-    "DiamondCutFacet",
-    { from: deployer },
-    "diamondCut",
-    facetCuts,
-    ethers.constants.AddressZero,
-    "0x",
-  );
-  log("Facets have been successfully added to the Diamond");
+  // await execute(
+  //   "DiamondCutFacet",
+  //   { from: deployer },
+  //   "diamondCut",
+  //   facetCuts,
+  //   ethers.constants.AddressZero,
+  //   "0x",
+  // );
+  // log("Facets have been successfully added to the Diamond");
 };
 
 export default deployDiamond;

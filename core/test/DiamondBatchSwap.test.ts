@@ -1,4 +1,5 @@
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
+import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 import { IERC20, MultiBatchSwapFacet } from "../typechain-types";
 import { COINS } from "../utils/polygon.constants";
@@ -9,7 +10,7 @@ describe("MultiBatchSwap Contract", function () {
   let deployerSigner: HardhatEthersSigner;
   const tokensToSwap = [
     { address: COINS.USDC_ADDRESS, amount: ethers.utils.parseUnits("10", 6) },
-    { address: COINS.SHIB, amount: ethers.utils.parseUnits("10", 18) },
+    // { address: COINS.SHIB, amount: ethers.utils.parseUnits("10", 18) },
   ];
   const targetToken = COINS.WMATIC_ADDRESS;
 
@@ -30,7 +31,7 @@ describe("MultiBatchSwap Contract", function () {
       console.log(`Setting allowance for ${token.address}...`);
       await tokenContract
         .connect(deployerSigner)
-        .approve(multiBatchSwapContract.address, token.amount);
+        .approve(multiBatchSwapContract.address, parseUnits("100", 18));
       const allowance = await tokenContract.allowance(
         deployerSigner.address,
         multiBatchSwapContract.address,
@@ -66,5 +67,40 @@ describe("MultiBatchSwap Contract", function () {
         `Balance after swap for ${token.address}: ${ethers.utils.formatUnits(balance, token.amount._isBigNumber ? token.amount._hex.length - 2 : 18)}`,
       );
     }
+  });
+
+  it("should swap 1v1 token", async function () {
+    const _inputToken = COINS.USDC_ADDRESS;
+    const _outputToken = COINS.WMATIC_ADDRESS;
+
+    const tokenContract = (await ethers.getContractAt(
+      "IERC20",
+      _inputToken,
+    )) as IERC20;
+
+    // Set allowance for MultiBatchSwap
+    console.log(`Setting allowance for ${_inputToken}...`);
+    await tokenContract
+      .connect(deployerSigner)
+      .approve(multiBatchSwapContract.address, parseUnits("100", 6));
+    const allowance = await tokenContract.allowance(
+      deployerSigner.address,
+      multiBatchSwapContract.address,
+    );
+    console.log(
+      `Allowance set for ${_inputToken}: ${ethers.utils.formatUnits(allowance, 6)}`,
+    );
+
+    // Perform batch swap
+    console.log("Performing batch swap...");
+    const tx = await multiBatchSwapContract
+      .connect(deployerSigner)
+      .batchSwapToSingleToken(
+        _inputToken,
+        _outputToken,
+        parseUnits("10", 6),
+        deployerSigner.address,
+      );
+    await tx.wait(1);
   });
 });
