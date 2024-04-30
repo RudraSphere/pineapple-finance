@@ -38,117 +38,16 @@ export declare namespace IDiamondCut {
 }
 
 export interface DiamondCutFacetInterface extends Interface {
-  getFunction(
-    nameOrSignature:
-      | "DEFAULT_ADMIN_ROLE"
-      | "UPGRADE_ADMIN_ROLE"
-      | "addUpgradeAdmin"
-      | "diamondCut"
-      | "getFacetAddress"
-      | "getRoleAdmin"
-      | "grantRole"
-      | "hasRole"
-      | "removeUpgradeAdmin"
-      | "renounceRole"
-      | "revokeRole"
-      | "supportsInterface"
-  ): FunctionFragment;
+  getFunction(nameOrSignature: "diamondCut"): FunctionFragment;
 
-  getEvent(
-    nameOrSignatureOrTopic:
-      | "DiamondCut"
-      | "FacetRemoved"
-      | "FacetUpdated"
-      | "RoleAdminChanged"
-      | "RoleGranted"
-      | "RoleRevoked"
-  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DiamondCut"): EventFragment;
 
-  encodeFunctionData(
-    functionFragment: "DEFAULT_ADMIN_ROLE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "UPGRADE_ADMIN_ROLE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addUpgradeAdmin",
-    values: [AddressLike]
-  ): string;
   encodeFunctionData(
     functionFragment: "diamondCut",
     values: [IDiamondCut.FacetCutStruct[], AddressLike, BytesLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "getFacetAddress",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getRoleAdmin",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "grantRole",
-    values: [BytesLike, AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "hasRole",
-    values: [BytesLike, AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeUpgradeAdmin",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renounceRole",
-    values: [BytesLike, AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "revokeRole",
-    values: [BytesLike, AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "supportsInterface",
-    values: [BytesLike]
-  ): string;
 
-  decodeFunctionResult(
-    functionFragment: "DEFAULT_ADMIN_ROLE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "UPGRADE_ADMIN_ROLE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "addUpgradeAdmin",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "diamondCut", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getFacetAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getRoleAdmin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "removeUpgradeAdmin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceRole",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "supportsInterface",
-    data: BytesLike
-  ): Result;
 }
 
 export namespace DiamondCutEvent {
@@ -166,89 +65,6 @@ export namespace DiamondCutEvent {
     _facetCuts: IDiamondCut.FacetCutStructOutput[];
     _init: string;
     _calldata: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace FacetRemovedEvent {
-  export type InputTuple = [selector: BytesLike];
-  export type OutputTuple = [selector: string];
-  export interface OutputObject {
-    selector: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace FacetUpdatedEvent {
-  export type InputTuple = [facetAddress: AddressLike, selector: BytesLike];
-  export type OutputTuple = [facetAddress: string, selector: string];
-  export interface OutputObject {
-    facetAddress: string;
-    selector: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace RoleAdminChangedEvent {
-  export type InputTuple = [
-    role: BytesLike,
-    previousAdminRole: BytesLike,
-    newAdminRole: BytesLike
-  ];
-  export type OutputTuple = [
-    role: string,
-    previousAdminRole: string,
-    newAdminRole: string
-  ];
-  export interface OutputObject {
-    role: string;
-    previousAdminRole: string;
-    newAdminRole: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace RoleGrantedEvent {
-  export type InputTuple = [
-    role: BytesLike,
-    account: AddressLike,
-    sender: AddressLike
-  ];
-  export type OutputTuple = [role: string, account: string, sender: string];
-  export interface OutputObject {
-    role: string;
-    account: string;
-    sender: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace RoleRevokedEvent {
-  export type InputTuple = [
-    role: BytesLike,
-    account: AddressLike,
-    sender: AddressLike
-  ];
-  export type OutputTuple = [role: string, account: string, sender: string];
-  export interface OutputObject {
-    role: string;
-    account: string;
-    sender: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -299,64 +115,14 @@ export interface DiamondCutFacet extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  DEFAULT_ADMIN_ROLE: TypedContractMethod<[], [string], "view">;
-
-  UPGRADE_ADMIN_ROLE: TypedContractMethod<[], [string], "view">;
-
-  addUpgradeAdmin: TypedContractMethod<
-    [newAdmin: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
   diamondCut: TypedContractMethod<
     [
-      _facetCuts: IDiamondCut.FacetCutStruct[],
+      _diamondCut: IDiamondCut.FacetCutStruct[],
       _init: AddressLike,
       _calldata: BytesLike
     ],
     [void],
     "nonpayable"
-  >;
-
-  getFacetAddress: TypedContractMethod<[selector: BytesLike], [string], "view">;
-
-  getRoleAdmin: TypedContractMethod<[role: BytesLike], [string], "view">;
-
-  grantRole: TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
-  hasRole: TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [boolean],
-    "view"
-  >;
-
-  removeUpgradeAdmin: TypedContractMethod<
-    [admin: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
-  renounceRole: TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
-  revokeRole: TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
-  supportsInterface: TypedContractMethod<
-    [interfaceId: BytesLike],
-    [boolean],
-    "view"
   >;
 
   getFunction<T extends ContractMethod = ContractMethod>(
@@ -364,65 +130,16 @@ export interface DiamondCutFacet extends BaseContract {
   ): T;
 
   getFunction(
-    nameOrSignature: "DEFAULT_ADMIN_ROLE"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "UPGRADE_ADMIN_ROLE"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "addUpgradeAdmin"
-  ): TypedContractMethod<[newAdmin: AddressLike], [void], "nonpayable">;
-  getFunction(
     nameOrSignature: "diamondCut"
   ): TypedContractMethod<
     [
-      _facetCuts: IDiamondCut.FacetCutStruct[],
+      _diamondCut: IDiamondCut.FacetCutStruct[],
       _init: AddressLike,
       _calldata: BytesLike
     ],
     [void],
     "nonpayable"
   >;
-  getFunction(
-    nameOrSignature: "getFacetAddress"
-  ): TypedContractMethod<[selector: BytesLike], [string], "view">;
-  getFunction(
-    nameOrSignature: "getRoleAdmin"
-  ): TypedContractMethod<[role: BytesLike], [string], "view">;
-  getFunction(
-    nameOrSignature: "grantRole"
-  ): TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "hasRole"
-  ): TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [boolean],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "removeUpgradeAdmin"
-  ): TypedContractMethod<[admin: AddressLike], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "renounceRole"
-  ): TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "revokeRole"
-  ): TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "supportsInterface"
-  ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
 
   getEvent(
     key: "DiamondCut"
@@ -430,41 +147,6 @@ export interface DiamondCutFacet extends BaseContract {
     DiamondCutEvent.InputTuple,
     DiamondCutEvent.OutputTuple,
     DiamondCutEvent.OutputObject
-  >;
-  getEvent(
-    key: "FacetRemoved"
-  ): TypedContractEvent<
-    FacetRemovedEvent.InputTuple,
-    FacetRemovedEvent.OutputTuple,
-    FacetRemovedEvent.OutputObject
-  >;
-  getEvent(
-    key: "FacetUpdated"
-  ): TypedContractEvent<
-    FacetUpdatedEvent.InputTuple,
-    FacetUpdatedEvent.OutputTuple,
-    FacetUpdatedEvent.OutputObject
-  >;
-  getEvent(
-    key: "RoleAdminChanged"
-  ): TypedContractEvent<
-    RoleAdminChangedEvent.InputTuple,
-    RoleAdminChangedEvent.OutputTuple,
-    RoleAdminChangedEvent.OutputObject
-  >;
-  getEvent(
-    key: "RoleGranted"
-  ): TypedContractEvent<
-    RoleGrantedEvent.InputTuple,
-    RoleGrantedEvent.OutputTuple,
-    RoleGrantedEvent.OutputObject
-  >;
-  getEvent(
-    key: "RoleRevoked"
-  ): TypedContractEvent<
-    RoleRevokedEvent.InputTuple,
-    RoleRevokedEvent.OutputTuple,
-    RoleRevokedEvent.OutputObject
   >;
 
   filters: {
@@ -477,61 +159,6 @@ export interface DiamondCutFacet extends BaseContract {
       DiamondCutEvent.InputTuple,
       DiamondCutEvent.OutputTuple,
       DiamondCutEvent.OutputObject
-    >;
-
-    "FacetRemoved(bytes4)": TypedContractEvent<
-      FacetRemovedEvent.InputTuple,
-      FacetRemovedEvent.OutputTuple,
-      FacetRemovedEvent.OutputObject
-    >;
-    FacetRemoved: TypedContractEvent<
-      FacetRemovedEvent.InputTuple,
-      FacetRemovedEvent.OutputTuple,
-      FacetRemovedEvent.OutputObject
-    >;
-
-    "FacetUpdated(address,bytes4)": TypedContractEvent<
-      FacetUpdatedEvent.InputTuple,
-      FacetUpdatedEvent.OutputTuple,
-      FacetUpdatedEvent.OutputObject
-    >;
-    FacetUpdated: TypedContractEvent<
-      FacetUpdatedEvent.InputTuple,
-      FacetUpdatedEvent.OutputTuple,
-      FacetUpdatedEvent.OutputObject
-    >;
-
-    "RoleAdminChanged(bytes32,bytes32,bytes32)": TypedContractEvent<
-      RoleAdminChangedEvent.InputTuple,
-      RoleAdminChangedEvent.OutputTuple,
-      RoleAdminChangedEvent.OutputObject
-    >;
-    RoleAdminChanged: TypedContractEvent<
-      RoleAdminChangedEvent.InputTuple,
-      RoleAdminChangedEvent.OutputTuple,
-      RoleAdminChangedEvent.OutputObject
-    >;
-
-    "RoleGranted(bytes32,address,address)": TypedContractEvent<
-      RoleGrantedEvent.InputTuple,
-      RoleGrantedEvent.OutputTuple,
-      RoleGrantedEvent.OutputObject
-    >;
-    RoleGranted: TypedContractEvent<
-      RoleGrantedEvent.InputTuple,
-      RoleGrantedEvent.OutputTuple,
-      RoleGrantedEvent.OutputObject
-    >;
-
-    "RoleRevoked(bytes32,address,address)": TypedContractEvent<
-      RoleRevokedEvent.InputTuple,
-      RoleRevokedEvent.OutputTuple,
-      RoleRevokedEvent.OutputObject
-    >;
-    RoleRevoked: TypedContractEvent<
-      RoleRevokedEvent.InputTuple,
-      RoleRevokedEvent.OutputTuple,
-      RoleRevokedEvent.OutputObject
     >;
   };
 }

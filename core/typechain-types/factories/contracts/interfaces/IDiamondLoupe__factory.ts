@@ -21,7 +21,7 @@ const _abi = [
     outputs: [
       {
         internalType: "address",
-        name: "",
+        name: "facetAddress_",
         type: "address",
       },
     ],
@@ -34,7 +34,7 @@ const _abi = [
     outputs: [
       {
         internalType: "address[]",
-        name: "",
+        name: "facetAddresses_",
         type: "address[]",
       },
     ],
@@ -53,7 +53,7 @@ const _abi = [
     outputs: [
       {
         internalType: "bytes4[]",
-        name: "",
+        name: "facetFunctionSelectors_",
         type: "bytes4[]",
       },
     ],
@@ -78,7 +78,7 @@ const _abi = [
           },
         ],
         internalType: "struct IDiamondLoupe.Facet[]",
-        name: "",
+        name: "facets_",
         type: "tuple[]",
       },
     ],

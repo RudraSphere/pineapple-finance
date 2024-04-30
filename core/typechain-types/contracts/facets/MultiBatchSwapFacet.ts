@@ -32,11 +32,11 @@ export interface MultiBatchSwapFacetInterface extends Interface {
       | "estimateSwapOutput"
       | "feeBasisPoints"
       | "owner"
+      | "quickswapRouter"
       | "renounceOwnership"
       | "setFeeBasisPoints"
       | "transferOwnership"
       | "uniswapFactory"
-      | "uniswapRouter"
   ): FunctionFragment;
 
   getEvent(
@@ -74,6 +74,10 @@ export interface MultiBatchSwapFacetInterface extends Interface {
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "quickswapRouter",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
@@ -87,10 +91,6 @@ export interface MultiBatchSwapFacetInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "uniswapFactory",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "uniswapRouter",
     values?: undefined
   ): string;
 
@@ -116,6 +116,10 @@ export interface MultiBatchSwapFacetInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "quickswapRouter",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
@@ -129,10 +133,6 @@ export interface MultiBatchSwapFacetInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "uniswapFactory",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "uniswapRouter",
     data: BytesLike
   ): Result;
 }
@@ -275,6 +275,8 @@ export interface MultiBatchSwapFacet extends BaseContract {
 
   owner: TypedContractMethod<[], [string], "view">;
 
+  quickswapRouter: TypedContractMethod<[], [string], "view">;
+
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
   setFeeBasisPoints: TypedContractMethod<
@@ -290,8 +292,6 @@ export interface MultiBatchSwapFacet extends BaseContract {
   >;
 
   uniswapFactory: TypedContractMethod<[], [string], "view">;
-
-  uniswapRouter: TypedContractMethod<[], [string], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
@@ -339,6 +339,9 @@ export interface MultiBatchSwapFacet extends BaseContract {
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "quickswapRouter"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
@@ -349,9 +352,6 @@ export interface MultiBatchSwapFacet extends BaseContract {
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "uniswapFactory"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "uniswapRouter"
   ): TypedContractMethod<[], [string], "view">;
 
   getEvent(

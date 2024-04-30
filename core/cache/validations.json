@@ -397,18 +397,18 @@
         "solcVersion": "0.8.10"
       },
       "contracts/Diamond.sol:Diamond": {
-        "src": "contracts/Diamond.sol:7",
+        "src": "contracts/Diamond.sol:8",
         "version": {
-          "withMetadata": "372d8bb4d3f5c9cd1ed9c06afa1a3f77ca2e4de1a24b995d90fb237b2ce9045c",
-          "withoutMetadata": "6bd382e3eee011ee12229f96b208c480d7ed67e2741443dfda8bf9f603244d48",
-          "linkedWithoutMetadata": "6bd382e3eee011ee12229f96b208c480d7ed67e2741443dfda8bf9f603244d48"
+          "withMetadata": "33651da51d2a5c766267a7e5fa46e0707381e5f38d792eb55584390bf6ddd8db",
+          "withoutMetadata": "33651da51d2a5c766267a7e5fa46e0707381e5f38d792eb55584390bf6ddd8db",
+          "linkedWithoutMetadata": "33651da51d2a5c766267a7e5fa46e0707381e5f38d792eb55584390bf6ddd8db"
         },
         "inherit": [],
         "libraries": [
-          "hardhat/console.sol:console"
+          "contracts/libraries/LibDiamond.sol:LibDiamond"
         ],
         "methods": [
-          "(address)",
+          "(address,address)",
           "()",
           "()"
         ],
@@ -417,113 +417,50 @@
           {
             "kind": "constructor",
             "contract": "Diamond",
-            "src": "contracts/Diamond.sol:10"
+            "src": "contracts/Diamond.sol:9"
+          },
+          {
+            "kind": "delegatecall",
+            "src": "contracts/libraries/LibDiamond.sol:260"
           }
         ],
         "layout": {
-          "storage": [
-            {
-              "label": "diamondCutFacet",
-              "offset": 0,
-              "slot": "0",
-              "type": "t_address",
-              "contract": "Diamond",
-              "src": "contracts/Diamond.sol:8"
-            }
-          ],
-          "types": {
-            "t_address": {
-              "label": "address",
-              "numberOfBytes": "20"
-            }
-          },
+          "storage": [],
+          "types": {},
           "layoutVersion": "1.2",
-          "flat": true,
+          "flat": false,
           "namespaces": {}
         },
         "solcVersion": "0.8.10"
       },
       "contracts/DiamondCutFacet.sol:DiamondCutFacet": {
-        "src": "contracts/DiamondCutFacet.sol:8",
+        "src": "contracts/DiamondCutFacet.sol:7",
         "version": {
-          "withMetadata": "df51b11c29bd5618f454c5ee758ff51d1e9de0522d0349a3cd018c4544900bba",
-          "withoutMetadata": "3c2f668234f113bd45ee9ae1f6753de903034462bffcc0ca48ce4170bbbc0d7d",
-          "linkedWithoutMetadata": "3c2f668234f113bd45ee9ae1f6753de903034462bffcc0ca48ce4170bbbc0d7d"
+          "withMetadata": "c568c0de1940d7a1f7aaf6e65d1b8ac9124d91fa980e31c6db9d839242cf2548",
+          "withoutMetadata": "0c975ff71f1d12a4eb3aaba94364f861d4542ab0ad387ad64afcb969c8be596d",
+          "linkedWithoutMetadata": "0c975ff71f1d12a4eb3aaba94364f861d4542ab0ad387ad64afcb969c8be596d"
         },
         "inherit": [
-          "contracts/DiamondGovernance.sol:DiamondGovernance",
-          "@openzeppelin/contracts/access/AccessControl.sol:AccessControl",
-          "@openzeppelin/contracts/utils/introspection/ERC165.sol:ERC165",
-          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165",
-          "@openzeppelin/contracts/access/IAccessControl.sol:IAccessControl",
-          "@openzeppelin/contracts/utils/Context.sol:Context",
           "contracts/interfaces/IDiamondCut.sol:IDiamondCut"
         ],
-        "libraries": [],
+        "libraries": [
+          "contracts/libraries/LibDiamond.sol:LibDiamond"
+        ],
         "methods": [
-          "diamondCut(struct IDiamondCut.FacetCut[],address,bytes)",
-          "getFacetAddress(bytes4)"
+          "diamondCut(struct IDiamondCut.FacetCut[],address,bytes)"
         ],
         "linkReferences": [],
         "errors": [
           {
             "kind": "delegatecall",
-            "src": "contracts/DiamondCutFacet.sol:54"
+            "src": "contracts/libraries/LibDiamond.sol:260"
           }
         ],
         "layout": {
-          "storage": [
-            {
-              "label": "_roles",
-              "offset": 0,
-              "slot": "0",
-              "type": "t_mapping(t_bytes32,t_struct(RoleData)19_storage)",
-              "contract": "AccessControl",
-              "src": "@openzeppelin/contracts/access/AccessControl.sol:56"
-            }
-          ],
-          "types": {
-            "t_address": {
-              "label": "address",
-              "numberOfBytes": "20"
-            },
-            "t_bool": {
-              "label": "bool",
-              "numberOfBytes": "1"
-            },
-            "t_bytes32": {
-              "label": "bytes32",
-              "numberOfBytes": "32"
-            },
-            "t_mapping(t_address,t_bool)": {
-              "label": "mapping(address => bool)",
-              "numberOfBytes": "32"
-            },
-            "t_mapping(t_bytes32,t_struct(RoleData)19_storage)": {
-              "label": "mapping(bytes32 => struct AccessControl.RoleData)",
-              "numberOfBytes": "32"
-            },
-            "t_struct(RoleData)19_storage": {
-              "label": "struct AccessControl.RoleData",
-              "members": [
-                {
-                  "label": "members",
-                  "type": "t_mapping(t_address,t_bool)",
-                  "offset": 0,
-                  "slot": "0"
-                },
-                {
-                  "label": "adminRole",
-                  "type": "t_bytes32",
-                  "offset": 0,
-                  "slot": "1"
-                }
-              ],
-              "numberOfBytes": "64"
-            }
-          },
+          "storage": [],
+          "types": {},
           "layoutVersion": "1.2",
-          "flat": true,
+          "flat": false,
           "namespaces": {}
         },
         "solcVersion": "0.8.10"
@@ -613,6 +550,68 @@
         },
         "solcVersion": "0.8.10"
       },
+      "contracts/DiamondInit.sol:DiamondInit": {
+        "src": "contracts/DiamondInit.sol:32",
+        "version": {
+          "withMetadata": "9bfce25ae4aab12489b915128c2b747b93d6a3403d30f5d1f4000201d6485c00",
+          "withoutMetadata": "66fcdbe5fa957ba8f347b59783cbcb2437d5e530f47321e58af25a4898e79802",
+          "linkedWithoutMetadata": "66fcdbe5fa957ba8f347b59783cbcb2437d5e530f47321e58af25a4898e79802"
+        },
+        "inherit": [],
+        "libraries": [
+          "contracts/libraries/LibDiamond.sol:LibDiamond"
+        ],
+        "methods": [
+          "init()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.10"
+      },
+      "contracts/DiamondInit.sol:IERC165": {
+        "src": "contracts/DiamondInit.sol:7",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "supportsInterface(bytes4)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.10"
+      },
+      "contracts/DiamondInit.sol:IERC173": {
+        "src": "contracts/DiamondInit.sol:11",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "owner()",
+          "transferOwnership(address)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.10"
+      },
       "contracts/PriceAggregator.sol:PriceAggregator": {
         "src": "contracts/PriceAggregator.sol:7",
         "version": {
@@ -640,13 +639,13 @@
               "label": "registry",
               "offset": 0,
               "slot": "0",
-              "type": "t_contract(PriceFeedRegistry)3143",
+              "type": "t_contract(PriceFeedRegistry)3202",
               "contract": "PriceAggregator",
               "src": "contracts/PriceAggregator.sol:8"
             }
           ],
           "types": {
-            "t_contract(PriceFeedRegistry)3143": {
+            "t_contract(PriceFeedRegistry)3202": {
               "label": "contract PriceFeedRegistry",
               "numberOfBytes": "20"
             }
@@ -847,7 +846,7 @@
               "label": "userOrders",
               "offset": 0,
               "slot": "2",
-              "type": "t_mapping(t_address,t_array(t_struct(DCAOrder)3193_storage)dyn_storage)",
+              "type": "t_mapping(t_address,t_array(t_struct(DCAOrder)3252_storage)dyn_storage)",
               "contract": "DCAFacet",
               "src": "contracts/facets/DCAFacet.sol:56"
             }
@@ -857,15 +856,15 @@
               "label": "address",
               "numberOfBytes": "20"
             },
-            "t_array(t_struct(DCAOrder)3193_storage)dyn_storage": {
+            "t_array(t_struct(DCAOrder)3252_storage)dyn_storage": {
               "label": "struct DCAFacet.DCAOrder[]",
               "numberOfBytes": "32"
             },
-            "t_mapping(t_address,t_array(t_struct(DCAOrder)3193_storage)dyn_storage)": {
+            "t_mapping(t_address,t_array(t_struct(DCAOrder)3252_storage)dyn_storage)": {
               "label": "mapping(address => struct DCAFacet.DCAOrder[])",
               "numberOfBytes": "32"
             },
-            "t_struct(DCAOrder)3193_storage": {
+            "t_struct(DCAOrder)3252_storage": {
               "label": "struct DCAFacet.DCAOrder",
               "members": [
                 {
@@ -951,9 +950,9 @@
       "contracts/facets/MultiBatchSwapFacet.sol:MultiBatchSwapFacet": {
         "src": "contracts/facets/MultiBatchSwapFacet.sol:12",
         "version": {
-          "withMetadata": "cc4832f57ac3cedc298233163d439551784ff19853d122a2ba45b6bc994a72f8",
-          "withoutMetadata": "9b98bce5c6ac89251c12ca0810ad83f709569183da1cf8d5097bd46062e0c0d8",
-          "linkedWithoutMetadata": "9b98bce5c6ac89251c12ca0810ad83f709569183da1cf8d5097bd46062e0c0d8"
+          "withMetadata": "ebc17d0f17ecde391b8c8af38b908657a03a679f1119a015295b2373a1567695",
+          "withoutMetadata": "7dfb1a9225835fe75c2dd9a9b98294e7d7bd804195f1a58896beb48e29c4b110",
+          "linkedWithoutMetadata": "7dfb1a9225835fe75c2dd9a9b98294e7d7bd804195f1a58896beb48e29c4b110"
         },
         "inherit": [
           "@openzeppelin/contracts/access/Ownable.sol:Ownable",
@@ -980,7 +979,7 @@
           },
           {
             "kind": "state-variable-immutable",
-            "name": "uniswapRouter",
+            "name": "quickswapRouter",
             "src": "contracts/facets/MultiBatchSwapFacet.sol:15"
           },
           {
@@ -1119,6 +1118,27 @@
         },
         "solcVersion": "0.8.10"
       },
+      "contracts/interfaces/IDiamondLoupe.sol:IDiamondLoupe": {
+        "src": "contracts/interfaces/IDiamondLoupe.sol:6",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "facets()",
+          "facetFunctionSelectors(address)",
+          "facetAddresses()",
+          "facetAddress(bytes4)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.10"
+      },
       "contracts/interfaces/IUniswapV2Factory.sol:IUniswapV2Factory": {
         "src": "contracts/interfaces/IUniswapV2Factory.sol:4",
         "inherit": [],
@@ -1164,6 +1184,36 @@
         ],
         "linkReferences": [],
         "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.10"
+      },
+      "contracts/libraries/LibDiamond.sol:LibDiamond": {
+        "src": "contracts/libraries/LibDiamond.sol:11",
+        "version": {
+          "withMetadata": "f03f0d98063c8b614e0a2785492cafaa8e05ce1fd8e275a36dc6f5de35ca040d",
+          "withoutMetadata": "a64c6cf9c6ba9368f5132c93a0196b3204a7963dbb4dd05dfddb4ab23126b8db",
+          "linkedWithoutMetadata": "a64c6cf9c6ba9368f5132c93a0196b3204a7963dbb4dd05dfddb4ab23126b8db"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "delegatecall",
+            "src": "contracts/libraries/LibDiamond.sol:260"
+          },
+          {
+            "kind": "delegatecall",
+            "src": "contracts/libraries/LibDiamond.sol:260"
+          }
+        ],
         "layout": {
           "storage": [],
           "types": {},

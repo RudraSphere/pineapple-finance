@@ -54,6 +54,18 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.DiamondGovernance__factory>;
     getContractFactory(
+      name: "DiamondInit",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DiamondInit__factory>;
+    getContractFactory(
+      name: "IERC165",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC165__factory>;
+    getContractFactory(
+      name: "IERC173",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC173__factory>;
+    getContractFactory(
       name: "DCAFacet",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.DCAFacet__factory>;
@@ -82,6 +94,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IDiamondCut__factory>;
     getContractFactory(
+      name: "IDiamondLoupe",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IDiamondLoupe__factory>;
+    getContractFactory(
       name: "IUniswapV2Factory",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IUniswapV2Factory__factory>;
@@ -89,6 +105,10 @@ declare module "hardhat/types/runtime" {
       name: "IUniswapV2Router",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IUniswapV2Router__factory>;
+    getContractFactory(
+      name: "LibDiamond",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.LibDiamond__factory>;
     getContractFactory(
       name: "PriceAggregator",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -153,6 +173,21 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.DiamondGovernance>;
     getContractAt(
+      name: "DiamondInit",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DiamondInit>;
+    getContractAt(
+      name: "IERC165",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC165>;
+    getContractAt(
+      name: "IERC173",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC173>;
+    getContractAt(
       name: "DCAFacet",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -188,6 +223,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IDiamondCut>;
     getContractAt(
+      name: "IDiamondLoupe",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IDiamondLoupe>;
+    getContractAt(
       name: "IUniswapV2Factory",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -197,6 +237,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.IUniswapV2Router>;
+    getContractAt(
+      name: "LibDiamond",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.LibDiamond>;
     getContractAt(
       name: "PriceAggregator",
       address: string | ethers.Addressable,
@@ -254,6 +299,18 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.DiamondGovernance>;
     deployContract(
+      name: "DiamondInit",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DiamondInit>;
+    deployContract(
+      name: "IERC165",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC165>;
+    deployContract(
+      name: "IERC173",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC173>;
+    deployContract(
       name: "DCAFacet",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.DCAFacet>;
@@ -282,6 +339,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IDiamondCut>;
     deployContract(
+      name: "IDiamondLoupe",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IDiamondLoupe>;
+    deployContract(
       name: "IUniswapV2Factory",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IUniswapV2Factory>;
@@ -289,6 +350,10 @@ declare module "hardhat/types/runtime" {
       name: "IUniswapV2Router",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IUniswapV2Router>;
+    deployContract(
+      name: "LibDiamond",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.LibDiamond>;
     deployContract(
       name: "PriceAggregator",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -353,6 +418,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.DiamondGovernance>;
     deployContract(
+      name: "DiamondInit",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DiamondInit>;
+    deployContract(
+      name: "IERC165",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC165>;
+    deployContract(
+      name: "IERC173",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC173>;
+    deployContract(
       name: "DCAFacet",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -388,6 +468,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IDiamondCut>;
     deployContract(
+      name: "IDiamondLoupe",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IDiamondLoupe>;
+    deployContract(
       name: "IUniswapV2Factory",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -397,6 +482,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IUniswapV2Router>;
+    deployContract(
+      name: "LibDiamond",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.LibDiamond>;
     deployContract(
       name: "PriceAggregator",
       args: any[],
