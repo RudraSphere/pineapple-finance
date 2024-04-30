@@ -1,12 +1,11 @@
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+'use client'
+
+import SwapForm from './components/SwapForm'
 
 export default function Home() {
   return (
-    <ConnectButton
-      showBalance={{
-        smallScreen: false,
-        largeScreen: true,
-      }}
-    />
-  );
+    <>
+      <SwapForm />
+    </>
+  )
 }
