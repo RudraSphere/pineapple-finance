@@ -1,75 +1,44 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./interfaces/IDiamondCut.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "./DiamondGovernance.sol";
+import {IDiamondCut} from "./interfaces/IDiamondCut.sol";
+import {LibDiamond} from "./libraries/LibDiamond.sol";
 
-contract DiamondCutFacet is IDiamondCut, DiamondGovernance {
-    event FacetUpdated(address indexed facetAddress, bytes4 indexed selector);
-    event FacetRemoved(bytes4 indexed selector);
-
-    struct DiamondStorage {
-        mapping(bytes4 => address) selectorToFacet;
-    }
-
+contract DiamondCutFacet is IDiamondCut {
     function diamondCut(
-        FacetCut[] calldata _facetCuts,
+        FacetCut[] calldata _diamondCut,
         address _init,
         bytes calldata _calldata
-    ) external onlyUpgradeAdmin {
-        DiamondStorage storage ds = diamondStorage();
-        for (uint i = 0; i < _facetCuts.length; i++) {
-            FacetCutAction action = _facetCuts[i].action;
-            address facetAddress = _facetCuts[i].facetAddress;
-            for (uint j = 0; j < _facetCuts[i].functionSelectors.length; j++) {
-                bytes4 selector = _facetCuts[i].functionSelectors[j];
-                if (action == FacetCutAction.Add) {
-                    if (ds.selectorToFacet[selector] != address(0)) {
-                        return;
-                    }
-                    // ! TODO: #pending removed for testing purposes, later uncomment this on deployment
-                    // require(
-                    //     ds.selectorToFacet[selector] == address(0),
-                    //     "Selector already added"
-                    // );
-                    ds.selectorToFacet[selector] = facetAddress;
-                } else if (action == FacetCutAction.Replace) {
-                    require(
-                        ds.selectorToFacet[selector] != address(0),
-                        "Selector not found"
-                    );
-                    ds.selectorToFacet[selector] = facetAddress;
-                } else if (action == FacetCutAction.Remove) {
-                    require(
-                        ds.selectorToFacet[selector] != address(0),
-                        "Selector not found"
-                    );
-                    delete ds.selectorToFacet[selector];
-                }
+    ) external override {
+        LibDiamond.enforceIsContractOwner();
+        LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
+        uint256 originalSelectorCount = ds.selectorCount;
+        uint256 selectorCount = originalSelectorCount;
+        bytes32 selectorSlot;
+        if (selectorCount & 7 > 0) {
+            selectorSlot = ds.selectorSlots[selectorCount >> 3];
+        }
+        for (uint256 facetIndex; facetIndex < _diamondCut.length; ) {
+            (selectorCount, selectorSlot) = LibDiamond
+                .addReplaceRemoveFacetSelectors(
+                    selectorCount,
+                    selectorSlot,
+                    _diamondCut[facetIndex].facetAddress,
+                    _diamondCut[facetIndex].action,
+                    _diamondCut[facetIndex].functionSelectors
+                );
+
+            unchecked {
+                facetIndex++;
             }
         }
-
-        if (_init != address(0)) {
-            (bool success, ) = _init.delegatecall(_calldata);
-            require(success, "Initialization failed");
+        if (selectorCount != originalSelectorCount) {
+            ds.selectorCount = uint16(selectorCount);
         }
-    }
-
-    function diamondStorage()
-        internal
-        pure
-        returns (DiamondStorage storage ds)
-    {
-        bytes32 position = keccak256("diamond.standard.diamond.storage");
-        assembly {
-            ds.slot := position
+        if (selectorCount & 7 > 0) {
+            ds.selectorSlots[selectorCount >> 3] = selectorSlot;
         }
-    }
-
-    // Public getter for facet addresses by selector
-    function getFacetAddress(bytes4 selector) public view returns (address) {
-        DiamondStorage storage ds = diamondStorage();
-        return ds.selectorToFacet[selector];
+        emit DiamondCut(_diamondCut, _init, _calldata);
+        LibDiamond.initializeDiamondCut(_init, _calldata);
     }
 }
