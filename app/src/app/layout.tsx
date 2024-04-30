@@ -18,6 +18,7 @@ export default function RootLayout({
       <body className='m-0 h-full min-h-screen bg-slate-900 p-0 text-slate-500'>
         <Web3Provider>
           <Navbar />
+          <br />
           {children}
         </Web3Provider>
       </body>
