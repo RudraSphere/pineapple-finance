@@ -13,6 +13,8 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
+/typechain-types
+/core/deployments/
 cache
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
