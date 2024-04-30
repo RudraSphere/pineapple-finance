@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className='m-0 h-full min-h-screen bg-slate-900 p-0'>
+      <body className='m-0 h-full min-h-screen bg-slate-900 p-0 text-slate-500'>
         <Web3Provider>
           <Navbar />
           {children}
