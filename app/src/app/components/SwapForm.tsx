@@ -16,6 +16,7 @@ import { address as diamondAddress } from '../../../deployments/internalRPC/Diam
 interface SwapFormInputs {
   tokens: { address: string; amount: string }[]
   targetToken: string
+  recipient: string
 }
 
 const SwapForm: FC = () => {
@@ -23,20 +24,14 @@ const SwapForm: FC = () => {
   const { tokensInfo } = useTokenInfo()
   const wContract = useWriteContract()
   const [errorMessage, setErrorMessage] = useState('')
-  // const gasPrice = useEthersProvider()
-  //   .getGasPrice()
-  //   .then(price => {
-  //     console.log('gasPrice', formatEther(price.toBigInt()))
-  //     return price.toString()
-  //   })
-
   const { fetchPrices, prices } = useTokenPrice()
-  // console.log('price', price)
+  const [showRecipient, setShowRecipient] = useState(false)
 
   const { register, handleSubmit, control, reset, watch, setValue } = useForm<SwapFormInputs>({
     defaultValues: {
       tokens: [{ address: '', amount: '' }],
       targetToken: 'select',
+      recipient: '',
     },
   })
 
@@ -47,16 +42,23 @@ const SwapForm: FC = () => {
   })
 
   const onSubmitHandler = async (data: SwapFormInputs) => {
-    if (!data.targetToken || data.targetToken === 'select') {
-      setErrorMessage('Target token is required.')
+    const recipient = data.recipient || userAddress
+
+    if (!data.tokens || data.tokens.length === 0) {
+      setErrorMessage('At least one Input token is required.')
       return
     }
+
     if (
       data.tokens.some(
         token => !token.address || !token.amount || ethers.utils.parseUnits(token.amount, 18).lte(0)
       )
     ) {
       setErrorMessage('All tokens must have a valid address and amount greater than zero.')
+      return
+    }
+    if (!data.targetToken || data.targetToken === 'select') {
+      setErrorMessage('Target token is required.')
       return
     }
     setErrorMessage('')
@@ -115,7 +117,7 @@ const SwapForm: FC = () => {
       <h3 className='mb-4 text-xl font-semibold'>Batch Swap Tokens</h3>
       {watch('tokens').map((token, index) => (
         <div key={index} className='mb-3 flex flex-col gap-1 rounded-lg bg-slate-200 p-2 pb-4'>
-          <label className='mb-2 block text-sm font-bold text-gray-700'>Token:</label>
+          <label className='mb-2 block text-sm font-bold text-gray-700'>You Pay:</label>
           <div className='flex gap-2'>
             <Controller
               control={control}
@@ -204,13 +206,12 @@ const SwapForm: FC = () => {
 
       {/* add Convert Icon */}
       <div className='my-4 flex justify-center align-middle'>
-        <p>Gas price: </p>
         <ArrowsUpDownIcon className='h-10 w-10 text-slate-500' />
       </div>
 
       {/* output token */}
       <div className='mb-3 mt-4 flex flex-col gap-1 rounded-lg bg-slate-200 p-2 pb-4'>
-        <label className='mb-2 block text-sm font-bold text-gray-700'>Token:</label>
+        <label className='mb-2 block text-sm font-bold text-gray-700'>You Get:</label>
         <div className='flex gap-2'>
           <select
             {...register('targetToken')}
@@ -236,6 +237,26 @@ const SwapForm: FC = () => {
           </div>
         </div>
       </div>
+      <label className='inline-flex cursor-pointer items-center'>
+        <input
+          onChange={() => setShowRecipient(!showRecipient)}
+          type='checkbox'
+          value=''
+          className='peer sr-only'
+        />
+        <div className="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"></div>
+        <span className='ms-3 text-sm font-medium text-gray-900 dark:text-gray-300'>Send to</span>
+      </label>
+
+      {showRecipient && (
+        <div className='mb-4 mt-2'>
+          <input
+            {...register('recipient')}
+            className='w-full rounded-lg p-2'
+            placeholder='recipient address'
+          />
+        </div>
+      )}
 
       {errorMessage && <p className='mb-1 text-red-500'>{errorMessage}</p>}
 
