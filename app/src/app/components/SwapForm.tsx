@@ -123,7 +123,10 @@ const SwapForm: FC = () => {
               control={control}
               name={`tokens.${index}.address`}
               render={({ field }) => (
-                <select {...field} className='mb-2 block max-w-md rounded border p-2 shadow-inner'>
+                <select
+                  {...field}
+                  className='border-1 border:bg-slate-800 mb-2 block max-w-md rounded-lg border bg-slate-800 p-2 text-slate-200 shadow-lg duration-200 hover:cursor-pointer hover:shadow-xl hover:shadow-slate-500'
+                >
                   <option value='select'>Select</option>
 
                   {tokenList.map(token => (
@@ -142,7 +145,7 @@ const SwapForm: FC = () => {
               rules={{
                 validate: value => {
                   const _token = tokensInfo[getTokenFromAddress(token.address)?.symbol]
-                  console.log(_token?.balance, value, _token?.decimals)
+
                   return ethers.utils
                     .parseUnits(value || '0', _token?.decimals)
                     .lte(_token?.balance || ethers.constants.Zero)
@@ -216,7 +219,7 @@ const SwapForm: FC = () => {
           <select
             {...register('targetToken')}
             defaultValue={'select'}
-            className='mb-2 block max-w-md rounded border p-2 shadow-inner'
+            className='border-1 border:bg-slate-800 mb-2 block max-w-md rounded-lg border bg-slate-800 p-2 text-slate-200 shadow-lg duration-200 hover:cursor-pointer hover:shadow-xl hover:shadow-slate-500'
           >
             <option value='select'>Select</option>
             {tokenList.map(token => (
