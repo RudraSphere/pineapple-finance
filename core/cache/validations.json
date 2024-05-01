@@ -2,6 +2,139 @@
   "version": "3.4",
   "log": [
     {
+      "contracts/DiamondInit.sol:DiamondInit": {
+        "src": "contracts/DiamondInit.sol:31",
+        "version": {
+          "withMetadata": "62d6443036d428db3bc80012603e370c44a0cd73971d4edf1caa09203a22223b",
+          "withoutMetadata": "66fcdbe5fa957ba8f347b59783cbcb2437d5e530f47321e58af25a4898e79802",
+          "linkedWithoutMetadata": "66fcdbe5fa957ba8f347b59783cbcb2437d5e530f47321e58af25a4898e79802"
+        },
+        "inherit": [],
+        "libraries": [
+          "contracts/libraries/LibDiamond.sol:LibDiamond"
+        ],
+        "methods": [
+          "init()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.10"
+      },
+      "contracts/DiamondInit.sol:IERC165": {
+        "src": "contracts/DiamondInit.sol:7",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "supportsInterface(bytes4)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.10"
+      },
+      "contracts/DiamondInit.sol:IERC173": {
+        "src": "contracts/DiamondInit.sol:11",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "owner()",
+          "transferOwnership(address)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.10"
+      },
+      "contracts/interfaces/IDiamondCut.sol:IDiamondCut": {
+        "src": "contracts/interfaces/IDiamondCut.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "diamondCut(struct IDiamondCut.FacetCut[],address,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.10"
+      },
+      "contracts/interfaces/IDiamondLoupe.sol:IDiamondLoupe": {
+        "src": "contracts/interfaces/IDiamondLoupe.sol:6",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "facets()",
+          "facetFunctionSelectors(address)",
+          "facetAddresses()",
+          "facetAddress(bytes4)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.10"
+      },
+      "contracts/libraries/LibDiamond.sol:LibDiamond": {
+        "src": "contracts/libraries/LibDiamond.sol:11",
+        "version": {
+          "withMetadata": "f03f0d98063c8b614e0a2785492cafaa8e05ce1fd8e275a36dc6f5de35ca040d",
+          "withoutMetadata": "a64c6cf9c6ba9368f5132c93a0196b3204a7963dbb4dd05dfddb4ab23126b8db",
+          "linkedWithoutMetadata": "a64c6cf9c6ba9368f5132c93a0196b3204a7963dbb4dd05dfddb4ab23126b8db"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "delegatecall",
+            "src": "contracts/libraries/LibDiamond.sol:260"
+          },
+          {
+            "kind": "delegatecall",
+            "src": "contracts/libraries/LibDiamond.sol:260"
+          }
+        ],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.10"
+      }
+    },
+    {
       "@openzeppelin/contracts/access/AccessControl.sol:AccessControl": {
         "src": "@openzeppelin/contracts/access/AccessControl.sol:50",
         "inherit": [
