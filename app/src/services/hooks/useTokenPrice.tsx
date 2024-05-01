@@ -1,29 +1,31 @@
 import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
-const useTokenPrice = (tokenAddress, network = 'polygon-pos') => {
-  const [price, setPrice] = useState(null)
+const useTokenPrices = (network = 'polygon-pos') => {
+  const [prices, setPrices] = useState({})
 
-  useEffect(() => {
-    const fetchPrice = async () => {
-      try {
-        const url = `https://api.coingecko.com/api/v3/simple/token_price/${network}?contract_addresses=${tokenAddress}&vs_currencies=usd`
+  const fetchPrices = async tokenAddresses => {
+    if (tokenAddresses.length === 0) return
 
-        const response = await axios.get(url, {
-          headers: { accept: 'application/json', 'x-cg-demo-api-key': 'CG-e6YjxdMeyfXS36HeJ9Ttej5g' }
-        })
+    const addresses = tokenAddresses.join(',')
+    const url = `https://api.coingecko.com/api/v3/simple/token_price/${network}?contract_addresses=${addresses}&vs_currencies=usd`
 
-        const priceData = response.data[tokenAddress.toLowerCase()].usd
-        setPrice(priceData)
-      } catch (error) {
-        console.error('Failed to fetch token price:', error)
-      }
+    try {
+      const response = await axios.get(url)
+      const newPrices = response.data
+
+      setPrices(currentPrices => ({
+        ...currentPrices,
+        ...Object.keys(newPrices).reduce((acc, key) => {
+          acc[key.toLowerCase()] = newPrices[key].usd
+          return acc
+        }, {}),
+      }))
+    } catch (error) {
+      // console.error('Failed to fetch token prices:', error)
     }
-
-    fetchPrice()
-  }, [tokenAddress, network])
-
-  return price
+  }
+  return { prices, fetchPrices }
 }
 
-export default useTokenPrice
+export default useTokenPrices
