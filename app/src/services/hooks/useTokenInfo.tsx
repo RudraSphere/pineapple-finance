@@ -26,15 +26,15 @@ const useTokenInfo = () => {
   })
 
   // @ts-expect-error
-  const _res = useReadContracts({
+  const { data, refetch } = useReadContracts({
     contracts: _contract,
     batchSize: 100,
     multicallAddress: polygon.contracts.multicall3.address,
   })
 
   useEffect(() => {
-    if (_res?.data?.length) {
-      const _tokensInfo = _res.data.reduce((acc, cur, idx) => {
+    if (data?.length) {
+      const _tokensInfo = data.reduce((acc, cur, idx) => {
         console.log(cur.result, cur.status)
         acc[tokenList[idx].symbol] = {
           balance: cur.result,
@@ -48,9 +48,9 @@ const useTokenInfo = () => {
 
       setTokensInfo(_tokensInfo)
     }
-  }, [_res?.data])
+  }, [data])
 
-  return { tokensInfo }
+  return { tokensInfo, refetch }
 }
 
 export default useTokenInfo
