@@ -286,7 +286,7 @@ export interface MultiBatchSwapFacet extends BaseContract {
       inputAmounts: BigNumberish[],
       outputToken: AddressLike
     ],
-    [bigint[]],
+    [bigint],
     "view"
   >;
 
@@ -359,7 +359,7 @@ export interface MultiBatchSwapFacet extends BaseContract {
       inputAmounts: BigNumberish[],
       outputToken: AddressLike
     ],
-    [bigint[]],
+    [bigint],
     "view"
   >;
   getFunction(

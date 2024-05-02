@@ -244,13 +244,13 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
         address[] calldata inputTokens,
         uint256[] calldata inputAmounts,
         address outputToken
-    ) external view returns (uint256[] memory outputAmounts) {
+    ) external view returns (uint256 outputAmount) {
         require(
             inputTokens.length == inputAmounts.length,
             "Input arrays must be of the same length"
         );
 
-        outputAmounts = new uint256[](inputTokens.length);
+        outputAmount = 0;
 
         for (uint i = 0; i < inputTokens.length; i++) {
             address[] memory path = findBestSwapPath(
@@ -262,9 +262,8 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
                 inputAmounts[i],
                 path
             );
-            outputAmounts[i] = amountsOut[1];
+            outputAmount += amountsOut[1];
         }
-
-        return outputAmounts;
+        return outputAmount;
     }
 }
