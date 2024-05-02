@@ -3,21 +3,15 @@ import Link from 'next/link'
 
 const Navbar = () => {
   return (
-    <nav className='bg-gray-900 p-4 text-white'>
+    <nav className='bg-gray-900 p-4 text-white shadow-lg'>
       <div className='container mx-auto flex items-center justify-between'>
         <div className='text-lg font-semibold'>Pineapple Finance</div>
         <div className='hidden space-x-4 md:flex'>
-          <Link href='#' className='hover:text-gray-300'>
+          <Link href='/' className='hover:text-gray-300'>
             Home
           </Link>
-          <Link href='#' className='hover:text-gray-300'>
-            Features
-          </Link>
-          <Link href='#' className='hover:text-gray-300'>
-            Pricing
-          </Link>
-          <Link href='#' className='hover:text-gray-300'>
-            Contact
+          <Link href='/faucet' className='hover:text-gray-300'>
+            Faucet
           </Link>
         </div>
         <div className='md:hidden'>

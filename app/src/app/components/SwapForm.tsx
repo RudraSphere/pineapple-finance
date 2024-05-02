@@ -263,7 +263,7 @@ const SwapForm: FC = () => {
       <button
         type='button'
         onClick={addTokenField}
-        className='rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700'
+        className='rounded bg-indigo-600 px-4 py-2 font-bold text-white hover:bg-blue-700 hover:shadow-lg'
       >
         + Add Token
       </button>
@@ -329,7 +329,7 @@ const SwapForm: FC = () => {
       <button
         type='submit'
         disabled={_isLoading}
-        className='spin mt-4 inline-flex w-full justify-center rounded-lg bg-green-500 px-4 py-2 align-middle font-bold text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50'
+        className='mt-4 inline-flex w-full justify-center rounded-lg bg-teal-700 px-4 py-2 align-middle font-bold text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50'
       >
         {_isLoading && <Spinner _className='size-4 mt-1 mr-1' />}
         {currStatus}
