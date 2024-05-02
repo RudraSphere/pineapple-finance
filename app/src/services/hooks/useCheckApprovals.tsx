@@ -8,7 +8,7 @@ interface CheckApprovalProps {
 }
 
 const useCheckApprovals = (args: CheckApprovalProps[]) => {
-  const { isLoading, data } = useReadContracts({
+  const { isLoading, data, refetch } = useReadContracts({
     // @ts-ignore
     contracts: args.map(({ token, from, to }) => ({
       address: token,
@@ -17,12 +17,13 @@ const useCheckApprovals = (args: CheckApprovalProps[]) => {
       args: [from, to],
     })),
   })
+  console.log('approvals data:', data, args)
   const approvals = data?.map((value, index) => ({
     ...args[index],
     limit: value?.result?.toString() || '0',
   }))
 
-  return { isLoading, approvals }
+  return { isLoading, approvals, refetch }
 }
 
 export default useCheckApprovals

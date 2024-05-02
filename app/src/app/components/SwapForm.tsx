@@ -1,17 +1,19 @@
 'use client'
 
-import useCheckApproval from '@/services/hooks/useCheckApproval'
+import Spinner from '@/elements/Spinner'
+import useCheckApprovals from '@/services/hooks/useCheckApprovals'
 import useTokenInfo from '@/services/hooks/useTokenInfo'
 import useTokenPrice from '@/services/hooks/useTokenPrice'
 import { cn, getTokenFromAddress } from '@/utils/common'
-import { Tokens, tokenList } from '@/utils/tokens'
+import { tokenList } from '@/utils/tokens'
 import { ArrowsUpDownIcon, XCircleIcon } from '@heroicons/react/16/solid'
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { FC, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { formatUnits } from 'viem'
+import { erc20Abi, formatUnits } from 'viem'
 import { useAccount, useWriteContract } from 'wagmi'
 import { address as diamondAddress } from '../../../deployments/internalRPC/Diamond.json'
+import { abi as MultiBatchSwapFacetAbi } from '../../../deployments/internalRPC/MultiBatchSwapFacet.json'
 
 interface SwapFormInputs {
   tokens: { address: string; amount: string }[]
@@ -21,28 +23,44 @@ interface SwapFormInputs {
 
 const SwapForm: FC = () => {
   const { address: userAddress } = useAccount()
-  const { tokensInfo } = useTokenInfo()
+  const { tokensInfo, refetch: refetchTokens } = useTokenInfo()
+  const [isLoading, setIsLoading] = useState(false)
   const wContract = useWriteContract()
   const [errorMessage, setErrorMessage] = useState('')
+  const [currStatus, setCurrStatus] = useState('Batch Swap')
   const { fetchPrices, prices } = useTokenPrice()
   const [showRecipient, setShowRecipient] = useState(false)
 
-  const { register, handleSubmit, control, reset, watch, setValue } = useForm<SwapFormInputs>({
-    defaultValues: {
-      tokens: [{ address: '', amount: '' }],
-      targetToken: 'select',
-      recipient: '',
-    },
-  })
+  const { register, getValues, handleSubmit, control, reset, watch, setValue } =
+    useForm<SwapFormInputs>({
+      defaultValues: {
+        tokens: [{ address: '', amount: '' }],
+        targetToken: 'select',
+        recipient: '',
+      },
+    })
 
-  const { data: allowance } = useCheckApproval({
-    token: Tokens.WMATIC.address,
-    from: userAddress,
-    to: diamondAddress,
-  })
+  const {
+    approvals,
+    isLoading: isLoadingApprovals,
+    refetch: refetchApprovals,
+  } = useCheckApprovals(
+    getValues('tokens')
+      .filter(({ address }) => address)
+      .map(({ address }) => {
+        return {
+          token: address,
+          from: userAddress,
+          to: diamondAddress,
+        }
+      })
+  )
 
   const onSubmitHandler = async (data: SwapFormInputs) => {
-    const recipient = data.recipient || userAddress
+    setIsLoading(true)
+    setCurrStatus('Processing...')
+    const { tokens, targetToken } = data
+    const recipient = (showRecipient && data.recipient) || userAddress
 
     if (!data.tokens || data.tokens.length === 0) {
       setErrorMessage('At least one Input token is required.')
@@ -57,45 +75,70 @@ const SwapForm: FC = () => {
       setErrorMessage('All tokens must have a valid address and amount greater than zero.')
       return
     }
+
     if (!data.targetToken || data.targetToken === 'select') {
       setErrorMessage('Target token is required.')
       return
     }
-    setErrorMessage('')
 
-    // console.log('Allowance already set', allowance)
-    // if (Number(allowance) < 1e18) {
-    //   console.log('Setting allowance...')
-    //   await wContract.writeContractAsync({
-    //     abi: erc20Abi,
-    //     address: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
-    //     functionName: 'approve',
-    //     args: [diamondAddress, ethers.utils.parseUnits('100', 6)],
-    //   })
-    //   // await wContract.writeContractAsync({
-    //   //   abi: erc20Abi,
-    //   //   address: '0x6f8a06447ff6fcf75d803135a7de15ce88c1d4ec',
-    //   //   functionName: 'approve',
-    //   //   args: [diamondAddress, ethers.utils.parseUnits('100', 18)],
-    //   // })
-    //   // Call the swap function
-    //   console.log('Swapping...', wContract)
-    //   const _tx = await wContract.writeContractAsync({
-    //     abi: MultiBatchSwapFacetAbi,
-    //     address: diamondAddress,
-    //     functionName: 'batchSwapsToSingleToken',
-    //     args: [
-    //       ['0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359'],
-    //       [ethers.utils.parseUnits('10', 6)],
-    //       '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
-    //       userAddress,
-    //       10,
-    //     ],
-    //   })
-    //   console.log('_tx', _tx)
-    // }
-    // console.log('Swapped...', wContract)
-    // // console.log(`After swap: ${formatEther(wMaticBalance)}, ${formatUnits(usdcBalance, 6)}}`)
+    setErrorMessage('')
+    for (let token of tokens) {
+      const tokenInfo = getTokenFromAddress(token.address)
+      if (!tokenInfo) {
+        setErrorMessage('Invalid token address.')
+        return
+      }
+
+      const amountInWei = ethers.utils.parseUnits(token.amount, tokenInfo.decimals)
+
+      for (let approval of approvals) {
+        console.log('approval', approval.limit.toString(), amountInWei.toString())
+        if (
+          approval.token === token.address &&
+          BigNumber.from(approval.limit || '0').lt(amountInWei)
+        ) {
+          setCurrStatus(`Approving ${tokenInfo.symbol}...`)
+          console.log(
+            'Approval needed for',
+            tokenInfo.symbol,
+            amountInWei.toString(),
+            approval.limit,
+            token.amount,
+            diamondAddress
+          )
+          await wContract.writeContractAsync({
+            abi: erc20Abi,
+            address: token.address as any,
+            functionName: 'approve',
+            args: [diamondAddress as any, amountInWei],
+          })
+          console.log('Approval done for', tokenInfo.symbol)
+        }
+      }
+    }
+
+    console.log('Swapping...', wContract)
+    setCurrStatus('Swapping...')
+    const _tx = await wContract.writeContractAsync({
+      abi: MultiBatchSwapFacetAbi,
+      address: diamondAddress,
+      functionName: 'batchSwapsToSingleToken',
+      args: [
+        data.tokens.map(token => token.address), // input tokens
+        data.tokens.map(token => {
+          const tokenInfo = getTokenFromAddress(token.address)
+          return ethers.utils.parseUnits(token.amount, tokenInfo?.decimals)
+        }), // input tokens amount
+        data.targetToken, // to token
+        recipient, // recipeint
+        0, // slipage
+      ],
+    })
+    console.log('_tx', _tx)
+    refetchTokens()
+    refetchApprovals()
+    setIsLoading(false)
+    setCurrStatus('Batch Swap')
   }
 
   const addTokenField = () => {
@@ -109,10 +152,12 @@ const SwapForm: FC = () => {
     setValue('tokens', newTokenFields)
   }
 
+  const _isLoading = isLoading || isLoadingApprovals
+
   return (
     <form
       onSubmit={handleSubmit(onSubmitHandler)}
-      className='mx-auto max-w-xl rounded-lg bg-slate-800 p-5 shadow-lg'
+      className='mx-auto mb-20 max-w-xl rounded-lg bg-slate-800 p-5 shadow-lg shadow-slate-800 duration-200 hover:shadow-sm hover:shadow-slate-600'
     >
       <h3 className='mb-4 text-xl font-semibold'>Batch Swap Tokens</h3>
       {watch('tokens').map((token, index) => (
@@ -264,11 +309,14 @@ const SwapForm: FC = () => {
       {errorMessage && <p className='mb-1 text-red-500'>{errorMessage}</p>}
 
       {/* Actions */}
+
       <button
         type='submit'
-        className='w-full rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700'
+        disabled={_isLoading}
+        className='spin mt-4 inline-flex w-full justify-center rounded-lg bg-green-500 px-4 py-2 align-middle font-bold text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50'
       >
-        Swap
+        {_isLoading && <Spinner _className='size-4 mt-1 mr-1' />}
+        {currStatus}
       </button>
     </form>
   )

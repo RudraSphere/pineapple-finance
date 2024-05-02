@@ -12,7 +12,7 @@ describe("MultiBatchSwap Contract", function () {
     { address: COINS.USDC_ADDRESS, amount: ethers.utils.parseUnits("10", 6) },
     // { address: COINS.SHIB, amount: ethers.utils.parseUnits("10", 18) },
   ];
-  const targetToken = COINS.WMATIC_ADDRESS;
+  const targetToken = COINS.BTC;
 
   beforeEach(async () => {
     const fixtures = await localFixtures();
@@ -71,7 +71,7 @@ describe("MultiBatchSwap Contract", function () {
 
   it("should swap 1v1 token", async function () {
     const _inputToken = COINS.USDC_ADDRESS;
-    const _outputToken = COINS.WMATIC_ADDRESS;
+    const _outputToken = COINS.BTC;
 
     const tokenContract = (await ethers.getContractAt(
       "IERC20",
