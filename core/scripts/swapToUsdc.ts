@@ -32,7 +32,7 @@ async function main() {
     quickswapRouterAddress,
   )) as IUniswapV2Router;
 
-  const amountInMatic = ethers.utils.parseEther("100");
+  const amountInMatic = ethers.utils.parseEther("1000");
   const path = [wrappedMaticAddress, usdcAddress]; // WETH (MATIC) -> USDC
   const to = deployer.address;
   const deadline = Math.floor(Date.now() / 1000) + 60 * 10; // 10 minutes from now
