@@ -227,15 +227,17 @@ const SwapForm: FC = () => {
                 </div>
               )}
             />
-            <div className='flex justify-center align-middle'>
-              <button
-                type='button'
-                onClick={() => removeToken(index)}
-                className='float-right flex justify-center self-center rounded-full bg-red-500 px-1 py-1 text-white hover:bg-red-700 hover:shadow-xl'
-              >
-                <XCircleIcon className='h-4 w-4 bg-transparent' />
-              </button>
-            </div>
+            {getValues('tokens').length > 1 && (
+              <div className='flex justify-center align-middle'>
+                <button
+                  type='button'
+                  onClick={() => removeToken(index)}
+                  className='float-right flex justify-center self-center rounded-full bg-red-500 px-1 py-1 text-white hover:bg-red-700 hover:shadow-xl'
+                >
+                  <XCircleIcon className='h-4 w-4 bg-transparent' />
+                </button>
+              </div>
+            )}
           </div>
           <div>
             <span>
