@@ -25,7 +25,7 @@ const useTokenInfo = () => {
     }
   })
 
-  // @ts-expect-error
+  // @ts-ignore
   const { data, refetch } = useReadContracts({
     contracts: _contract,
     batchSize: 100,
