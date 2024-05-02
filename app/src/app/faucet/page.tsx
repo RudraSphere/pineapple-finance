@@ -100,7 +100,7 @@ const FaucetPage = () => {
           disabled={loading}
           className='rounded bg-indigo-600 px-4 py-2 font-bold text-white hover:bg-blue-700 hover:shadow-lg'
         >
-          {loading ? 'Sending USDC...' : 'Get 4 USDC'}
+          {loading ? 'Sending USDC...' : 'Get 2 USDC'}
         </button>
         <button
           onClick={sendMatic}
