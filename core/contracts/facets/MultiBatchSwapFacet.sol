@@ -239,4 +239,32 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
         address[] memory path = findBestSwapPath(fromToken, toToken);
         return quickswapRouter.getAmountsOut(inputAmount, path);
     }
+
+    function estimateSwapOutputs(
+        address[] calldata inputTokens,
+        uint256[] calldata inputAmounts,
+        address outputToken
+    ) external view returns (uint256[] memory outputAmounts) {
+        require(
+            inputTokens.length == inputAmounts.length,
+            "Input arrays must be of the same length"
+        );
+
+        outputAmounts = new uint256[](inputTokens.length);
+
+        for (uint i = 0; i < inputTokens.length; i++) {
+            address[] memory path = findBestSwapPath(
+                inputTokens[i],
+                outputToken
+            );
+
+            uint256[] memory amountsOut = quickswapRouter.getAmountsOut(
+                inputAmounts[i],
+                path
+            );
+            outputAmounts[i] = amountsOut[1];
+        }
+
+        return outputAmounts;
+    }
 }

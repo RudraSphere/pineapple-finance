@@ -30,6 +30,7 @@ export interface MultiBatchSwapFacetInterface extends Interface {
       | "batchSwapToSingleToken"
       | "batchSwapsToSingleToken"
       | "estimateSwapOutput"
+      | "estimateSwapOutputs"
       | "feeBasisPoints"
       | "owner"
       | "quickswapRouter"
@@ -67,6 +68,10 @@ export interface MultiBatchSwapFacetInterface extends Interface {
   encodeFunctionData(
     functionFragment: "estimateSwapOutput",
     values: [AddressLike, AddressLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "estimateSwapOutputs",
+    values: [AddressLike[], BigNumberish[], AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "feeBasisPoints",
@@ -108,6 +113,10 @@ export interface MultiBatchSwapFacetInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "estimateSwapOutput",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "estimateSwapOutputs",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -271,6 +280,16 @@ export interface MultiBatchSwapFacet extends BaseContract {
     "view"
   >;
 
+  estimateSwapOutputs: TypedContractMethod<
+    [
+      inputTokens: AddressLike[],
+      inputAmounts: BigNumberish[],
+      outputToken: AddressLike
+    ],
+    [bigint[]],
+    "view"
+  >;
+
   feeBasisPoints: TypedContractMethod<[], [bigint], "view">;
 
   owner: TypedContractMethod<[], [string], "view">;
@@ -329,6 +348,17 @@ export interface MultiBatchSwapFacet extends BaseContract {
     nameOrSignature: "estimateSwapOutput"
   ): TypedContractMethod<
     [fromToken: AddressLike, toToken: AddressLike, inputAmount: BigNumberish],
+    [bigint[]],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "estimateSwapOutputs"
+  ): TypedContractMethod<
+    [
+      inputTokens: AddressLike[],
+      inputAmounts: BigNumberish[],
+      outputToken: AddressLike
+    ],
     [bigint[]],
     "view"
   >;

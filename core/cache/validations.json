@@ -950,9 +950,9 @@
       "contracts/facets/MultiBatchSwapFacet.sol:MultiBatchSwapFacet": {
         "src": "contracts/facets/MultiBatchSwapFacet.sol:12",
         "version": {
-          "withMetadata": "ebc17d0f17ecde391b8c8af38b908657a03a679f1119a015295b2373a1567695",
-          "withoutMetadata": "7dfb1a9225835fe75c2dd9a9b98294e7d7bd804195f1a58896beb48e29c4b110",
-          "linkedWithoutMetadata": "7dfb1a9225835fe75c2dd9a9b98294e7d7bd804195f1a58896beb48e29c4b110"
+          "withMetadata": "23c61fcfca14b570cb0c5bf1df83bbd634ff73630ba04da59a4ee3bb46212f41",
+          "withoutMetadata": "41100a71b8f8fa106543302efe07b5b7cd5287fd7795b0f5f69f8c9b8c5389c9",
+          "linkedWithoutMetadata": "41100a71b8f8fa106543302efe07b5b7cd5287fd7795b0f5f69f8c9b8c5389c9"
         },
         "inherit": [
           "@openzeppelin/contracts/access/Ownable.sol:Ownable",
@@ -968,7 +968,8 @@
           "batchSwapsToSingleToken(address[],uint256[],address,address,uint256)",
           "batchSwapToSingleToken(address,address,uint256,address)",
           "setFeeBasisPoints(uint256)",
-          "estimateSwapOutput(address,address,uint256)"
+          "estimateSwapOutput(address,address,uint256)",
+          "estimateSwapOutputs(address[],uint256[],address)"
         ],
         "linkReferences": [],
         "errors": [
