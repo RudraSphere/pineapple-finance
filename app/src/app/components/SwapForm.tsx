@@ -10,6 +10,7 @@ import { ArrowsUpDownIcon, XCircleIcon } from '@heroicons/react/16/solid'
 import { BigNumber, ethers } from 'ethers'
 import { FC, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
 import { erc20Abi, formatUnits } from 'viem'
 import { useAccount, useWriteContract } from 'wagmi'
 import { address as diamondAddress } from '../../../deployments/internalRPC/Diamond.json'
@@ -98,6 +99,9 @@ const SwapForm: FC = () => {
           BigNumber.from(approval.limit || '0').lt(amountInWei)
         ) {
           setCurrStatus(`Approving ${tokenInfo.symbol}...`)
+          toast.success(`Approving ${tokenInfo.symbol}...`, {
+            icon: '⏳',
+          })
           console.log(
             'Approval needed for',
             tokenInfo.symbol,
@@ -119,6 +123,9 @@ const SwapForm: FC = () => {
 
     console.log('Swapping...', wContract)
     setCurrStatus('Swapping...')
+    toast.success('Swapping...', {
+      icon: '⏳',
+    })
     const _tx = await wContract.writeContractAsync({
       abi: MultiBatchSwapFacetAbi,
       address: diamondAddress,
@@ -134,6 +141,13 @@ const SwapForm: FC = () => {
         0, // slipage
       ],
     })
+    if (recipient !== userAddress) {
+      toast.success(`Tokens sent to ${recipient}`, {
+        icon: '🚀',
+      })
+    } else {
+      toast.success('Batch swap done')
+    }
     console.log('_tx', _tx)
     refetchTokens()
     refetchApprovals()
