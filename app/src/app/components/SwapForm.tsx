@@ -203,11 +203,17 @@ const SwapForm: FC = () => {
               name={`tokens.${index}.amount`}
               rules={{
                 validate: value => {
+                  const isValidNumber = /^(\d+(\.\d+)?)$/.test(value)
+                  console.log('isValidNumber', isValidNumber, value)
+                  if (!isValidNumber) return 'Invalid amount 😕'
+
                   const _token = tokensInfo[getTokenFromAddress(token.address)?.symbol]
 
                   return ethers.utils
                     .parseUnits(value || '0', _token?.decimals)
                     .lte(_token?.balance || ethers.constants.Zero)
+                    ? true
+                    : 'Insufficient balance 🥲'
                 },
               }}
               render={({ field, fieldState: { error } }) => (
@@ -221,9 +227,7 @@ const SwapForm: FC = () => {
                     )}
                     placeholder='Amount'
                   />
-                  {error && (
-                    <p className='mt-1 text-right text-xs text-red-500'>Amount exceeds balance</p>
-                  )}
+                  {error && <p className='mt-1 text-right text-xs text-red-500'>{error.message}</p>}
                 </div>
               )}
             />
