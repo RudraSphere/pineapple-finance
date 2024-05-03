@@ -58,8 +58,6 @@ const SwapForm: FC = () => {
   )
 
   const onSubmitHandler = async (data: SwapFormInputs) => {
-    setIsLoading(true)
-    setCurrStatus('Processing...')
     const { tokens, targetToken } = data
     const recipient = (showRecipient && data.recipient) || userAddress
 
@@ -81,6 +79,8 @@ const SwapForm: FC = () => {
       setErrorMessage('Target token is required.')
       return
     }
+    setIsLoading(true)
+    setCurrStatus('Processing...')
 
     setErrorMessage('')
     for (let token of tokens) {
@@ -126,29 +126,36 @@ const SwapForm: FC = () => {
     toast.success('Swapping...', {
       icon: '⏳',
     })
-    const _tx = await wContract.writeContractAsync({
-      abi: MultiBatchSwapFacetAbi,
-      address: diamondAddress,
-      functionName: 'batchSwapsToSingleToken',
-      args: [
-        data.tokens.map(token => token.address), // input tokens
-        data.tokens.map(token => {
-          const tokenInfo = getTokenFromAddress(token.address)
-          return ethers.utils.parseUnits(token.amount, tokenInfo?.decimals)
-        }), // input tokens amount
-        data.targetToken, // to token
-        recipient, // recipeint
-        0, // slipage
-      ],
-    })
-    if (recipient !== userAddress) {
-      toast.success(`Tokens sent to ${recipient}`, {
-        icon: '🚀',
+    try {
+      const _tx = await wContract.writeContractAsync({
+        abi: MultiBatchSwapFacetAbi,
+        address: diamondAddress,
+        functionName: 'batchSwapsToSingleToken',
+        args: [
+          data.tokens.map(token => token.address), // input tokens
+          data.tokens.map(token => {
+            const tokenInfo = getTokenFromAddress(token.address)
+            return ethers.utils.parseUnits(token.amount, tokenInfo?.decimals)
+          }), // input tokens amount
+          data.targetToken, // to token
+          recipient, // recipeint
+          0, // slipage
+        ],
       })
-    } else {
-      toast.success('Batch swap done')
+      if (recipient !== userAddress) {
+        toast.success(`Tokens sent to ${recipient}`, {
+          icon: '🚀',
+        })
+      } else {
+        toast.success('Batch swap done')
+      }
+      console.log('_tx', _tx)
+    } catch (error) {
+      console.error('Error:', error)
+      toast.error(`Some error occured`, {
+        icon: '😵‍💫',
+      })
     }
-    console.log('_tx', _tx)
     refetchTokens()
     refetchApprovals()
     setIsLoading(false)
@@ -337,6 +344,10 @@ const SwapForm: FC = () => {
       >
         {_isLoading && <Spinner _className='size-4 mt-1 mr-1' />}
         {currStatus}
+
+        {formState.isValid ? '' : ' (Fill all fields)'}
+        {isLoading && '...loading'}
+        {isLoadingApprovals && '...loading approvals'}
       </button>
     </form>
   )
