@@ -138,7 +138,7 @@ const DcaPage = () => {
   }
 
   return (
-    <div className='mx-auto my-4 flex max-w-5xl flex-wrap gap-4 overflow-auto duration-300'>
+    <div className='mx-auto my-4 mb-6 flex max-w-5xl flex-wrap gap-4 overflow-auto duration-300'>
       <div className='max-h-[37rem] flex-1 rounded-lg bg-slate-800 p-5 text-white shadow-lg'>
         <h1 className='mb-4 text-3xl font-semibold'>Dollar Cost Averaging (DCA)</h1>
 
