@@ -19,12 +19,13 @@ export default function Home() {
   }
 
   return (
-    <>
+    <div className='mb-6 flex overflow-auto'>
       <div className='mx-auto my-4 max-w-4xl text-center'>
+        <img src={'/img.svg'} className='mx-auto size-96' />
         <p className='mb-2 text-pretty font-mono text-3xl text-teal-500 underline underline-offset-8'>
           Your Funds are Safe.
         </p>
-        <h4 className='font-heading text-lg font-semibold'>
+        <h4 className='font-heading max-w-2xl text-lg font-semibold'>
           Personal Project Deployed on a Forked Version of the Polygon Network on AWS EC2 (Internal
           RPC).
         </h4>
@@ -37,6 +38,6 @@ export default function Home() {
       </div>
 
       <SwapForm />
-    </>
+    </div>
   )
 }
