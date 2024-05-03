@@ -7,7 +7,7 @@ function cn(...inputs: ClassValue[]) {
 }
 
 function getTokenFromAddress(address: string) {
-  return tokenList.find(token => token.address === address)
+  return tokenList.find(token => token.address?.toLowerCase() === address?.toLowerCase())
 }
 
 export { cn, getTokenFromAddress }
