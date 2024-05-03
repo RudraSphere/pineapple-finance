@@ -10,7 +10,7 @@ const useTokenPrices = (network = 'polygon-pos') => {
       const tokenAddresses = tokenList?.map(token => token.address)
       if (process.env.NODE_ENV == 'development') {
         const devPrices = tokenList.reduce((acc, token) => {
-          acc[token.address.toLowerCase()] = 1
+          acc[token.address.toLowerCase()] = Math.random()
           return acc
         }, {})
         setPrices(devPrices)

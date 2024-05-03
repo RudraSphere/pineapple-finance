@@ -196,10 +196,8 @@ const SwapForm: FC = () => {
         console.log('amountInWei', amountInWei, tokenUSDValue, tokenInfo?.decimals)
 
         totalUSD +=
-          amountInWei
-            ?.mul(tokenUSDValue)
-            ?.div(BigNumber.from(10).pow(tokenInfo?.decimals || 18))
-            ?.toNumber() || 0
+          amountInWei?.div(BigNumber.from(10).pow(tokenInfo?.decimals || 18))?.toNumber() *
+            tokenUSDValue || 0
       }
     })
 
