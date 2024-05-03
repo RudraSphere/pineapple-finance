@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useAccount, useReadContract, useWriteContract } from 'wagmi'
 
 import useCheckApproval from '@/services/hooks/useCheckApproval'
+import useEnsureNetwork from '@/services/hooks/useEnsureNetwork'
 import useTokenInfo from '@/services/hooks/useTokenInfo'
 import { cn, getTokenFromAddress } from '@/utils/common'
 import { tokenList } from '@/utils/tokens'
@@ -17,6 +18,7 @@ import { address as diamondAddress } from '../../../deployments/internalRPC/Diam
 
 const DcaPage = () => {
   const { isConnected, address: userAddress } = useAccount()
+  const { isCorrectNetwork } = useEnsureNetwork()
   const { tokensInfo, refetch: refetchTokens } = useTokenInfo()
   const {
     register,
@@ -123,6 +125,16 @@ const DcaPage = () => {
     refetchTokens()
     refetchApprovals()
     setLoading(false)
+  }
+
+  if (!isCorrectNetwork) {
+    return (
+      <div className='mx-auto my-4 max-w-4xl text-center'>
+        <h4 className='font-heading text-3xl font-semibold'>
+          Please switch to the Polygon Forked Internal RPC network to use this app.
+        </h4>
+      </div>
+    )
   }
 
   return (
@@ -240,7 +252,7 @@ const DcaPage = () => {
             )}
           </div>
           <div>
-            <label className='mb-2 block'>Interval (seconds):</label>
+            <label className='mb-2 block'>Interval (minutes):</label>
             <input
               {...register('interval', {
                 required: 'Interval is required',
