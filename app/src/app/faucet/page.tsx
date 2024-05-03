@@ -98,16 +98,16 @@ const FaucetPage = () => {
         <button
           onClick={sendUSDC}
           disabled={loading}
-          className='rounded bg-indigo-600 px-4 py-2 font-bold text-white hover:bg-blue-700 hover:shadow-lg'
+          className='rounded bg-indigo-600 px-4 py-2 font-bold text-white hover:bg-blue-700 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50'
         >
-          {loading ? 'Sending USDC...' : 'Get 2 USDC'}
+          Get 2 USDC
         </button>
         <button
           onClick={sendMatic}
           disabled={loading}
-          className='ml-2 rounded bg-indigo-600 px-4 py-2 font-bold text-white hover:bg-blue-700 hover:shadow-lg'
+          className='ml-2 rounded bg-indigo-600 px-4 py-2 font-bold text-white hover:bg-blue-700 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50'
         >
-          {loading ? 'Sending Matic...' : 'Get 10 Matic'}
+          Get 10 Matic
         </button>
 
         <p className='mt-2 text-pretty text-slate-400'>Believe me, thats a lot of free money. 😵‍💫</p>

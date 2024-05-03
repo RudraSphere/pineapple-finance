@@ -32,7 +32,7 @@ const SwapForm: FC = () => {
   const { fetchPrices, prices } = useTokenPrice()
   const [showRecipient, setShowRecipient] = useState(false)
 
-  const { register, getValues, handleSubmit, control, reset, watch, setValue } =
+  const { register, getValues, handleSubmit, control, reset, watch, setValue, formState } =
     useForm<SwapFormInputs>({
       defaultValues: {
         tokens: [{ address: '', amount: '' }],
@@ -171,7 +171,7 @@ const SwapForm: FC = () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmitHandler)}
-      className='mx-auto mb-20 max-w-xl rounded-lg bg-slate-800 p-5 shadow-lg shadow-slate-800 duration-200 hover:shadow-sm hover:shadow-slate-600'
+      className='mx-auto mb-20 max-w-xl rounded-lg bg-slate-800 p-5 shadow-sm shadow-slate-800 duration-200 hover:shadow-slate-600'
     >
       <h3 className='mb-4 text-xl font-semibold'>Batch Swap Tokens</h3>
       {watch('tokens').map((token, index) => (
@@ -222,7 +222,7 @@ const SwapForm: FC = () => {
                     {...field}
                     type='text'
                     className={cn(
-                      `block w-full rounded border-0 bg-transparent p-2 text-right text-2xl`,
+                      `block w-full rounded border-0 bg-transparent p-2 text-right text-2xl outline-none`,
                       error && 'text-red-600'
                     )}
                     placeholder='Amount'
@@ -332,7 +332,7 @@ const SwapForm: FC = () => {
 
       <button
         type='submit'
-        disabled={_isLoading}
+        disabled={_isLoading || !formState.isValid}
         className='mt-4 inline-flex w-full justify-center rounded-lg bg-teal-700 px-4 py-2 align-middle font-bold text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50'
       >
         {_isLoading && <Spinner _className='size-4 mt-1 mr-1' />}
