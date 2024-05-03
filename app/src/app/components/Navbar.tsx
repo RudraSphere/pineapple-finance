@@ -11,7 +11,7 @@ const Navbar = () => {
         </div>
         <div className='hidden space-x-4 md:flex'>
           <Link href='/' className='hover:text-gray-300'>
-            Home
+            Batch Swap
           </Link>
           <Link href='/faucet' className='hover:text-gray-300'>
             Faucet

@@ -8,7 +8,7 @@ import { cn, getTokenFromAddress } from '@/utils/common'
 import { tokenList } from '@/utils/tokens'
 import { ArrowsUpDownIcon, XCircleIcon } from '@heroicons/react/16/solid'
 import { BigNumber, ethers } from 'ethers'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { erc20Abi, formatUnits } from 'viem'
@@ -29,8 +29,9 @@ const SwapForm: FC = () => {
   const wContract = useWriteContract()
   const [errorMessage, setErrorMessage] = useState('')
   const [currStatus, setCurrStatus] = useState('Batch Swap')
-  const { fetchPrices, prices } = useTokenPrice()
+  const { prices: tokenPrices } = useTokenPrice()
   const [showRecipient, setShowRecipient] = useState(false)
+  const [estimatedValueUSD, setEstimatedValueUSD] = useState(0)
 
   const { register, getValues, handleSubmit, control, reset, watch, setValue, formState } =
     useForm<SwapFormInputs>({
@@ -179,6 +180,36 @@ const SwapForm: FC = () => {
     setValue('tokens', newTokenFields)
   }
 
+  useEffect(() => {
+    console.log('running')
+    const inputTokens = watch('tokens')
+    let totalUSD = 0
+    console.log('tokenPrices in', tokenPrices)
+
+    inputTokens.forEach(token => {
+      const tokenInfo = getTokenFromAddress(token?.address)
+      const amountInWei = ethers.utils.parseUnits(token?.amount || '0', tokenInfo?.decimals)
+      const tokenUSDValue = tokenPrices[token?.address?.toLowerCase()] || 1
+
+      console.log(
+        'BigNumber.from(1).pow(tokenInfo?.decimals || 0)',
+        BigNumber.from(1)
+          .pow(tokenInfo?.decimals || 0)
+          .toString()
+      )
+
+      totalUSD +=
+        amountInWei
+          ?.mul(tokenUSDValue)
+          ?.div(BigNumber.from(10).pow(tokenInfo?.decimals || 0))
+          ?.toNumber() || 0
+    })
+
+    const estimatedOutputUSD = totalUSD * 0.98 // 2% slippage
+    console.log('estimatedOutputUSD', estimatedOutputUSD)
+    setEstimatedValueUSD(estimatedOutputUSD)
+  }, [watch('tokens').map(token => token.amount), tokenPrices])
+
   const inputTokens = watch('tokens').map(token => token.address)
   const availableOutputTokens = tokenList.filter(token => !inputTokens.includes(token.address))
 
@@ -310,11 +341,12 @@ const SwapForm: FC = () => {
             ))}
           </select>
 
-          {/* Amount input */}
+          {/* Amount output */}
           <div>
             <input
               type='text'
               disabled
+              value={`~$${estimatedValueUSD.toFixed(2)}`}
               className={cn(`block w-full rounded border-0 bg-transparent p-2 text-right text-2xl`)}
               placeholder='0.00'
             />
