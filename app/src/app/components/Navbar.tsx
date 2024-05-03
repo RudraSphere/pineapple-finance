@@ -5,7 +5,10 @@ const Navbar = () => {
   return (
     <nav className='bg-gray-900 p-4 text-white shadow-lg'>
       <div className='container mx-auto flex items-center justify-between'>
-        <div className='text-lg font-semibold'>Pineapple Finance</div>
+        <div className='inline-flex gap-2 text-lg font-semibold'>
+          <img className='size-8' src={'./logo.svg'} />
+          Pineapple Finance.
+        </div>
         <div className='hidden space-x-4 md:flex'>
           <Link href='/' className='hover:text-gray-300'>
             Home
