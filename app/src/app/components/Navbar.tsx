@@ -14,7 +14,8 @@ const Navbar = () => {
           <Link href='/' className='hover:text-gray-300'>
             Batch Swap
           </Link>
-          <Link href='/faucet' className='hover:text-gray-300'>
+          <Link href='/faucet' className='relative hover:text-gray-300'>
+            <span className='absolute left-[-5px] top-0 animate-ping rounded-full bg-red-500 p-1'></span>
             Faucet
           </Link>
           <Link href='/dca' className='hover:text-gray-300'>
