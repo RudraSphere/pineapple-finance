@@ -79,6 +79,12 @@ const SwapForm: FC = () => {
       setErrorMessage('Target token is required.')
       return
     }
+
+    if (tokens.some(token => token.address === targetToken)) {
+      setErrorMessage('Target token cannot be in input tokens.')
+      return
+    }
+
     setIsLoading(true)
     setCurrStatus('Processing...')
 
@@ -172,6 +178,9 @@ const SwapForm: FC = () => {
     const newTokenFields = watch('tokens').filter((_, i) => i !== index)
     setValue('tokens', newTokenFields)
   }
+
+  const inputTokens = watch('tokens').map(token => token.address)
+  const availableOutputTokens = tokenList.filter(token => !inputTokens.includes(token.address))
 
   const _isLoading = isLoading || isLoadingApprovals
 
@@ -294,7 +303,7 @@ const SwapForm: FC = () => {
             className='border-1 border:bg-slate-800 mb-2 block max-w-md rounded-lg border bg-slate-800 p-2 text-slate-200 shadow-lg duration-200 hover:cursor-pointer hover:shadow-xl hover:shadow-slate-500'
           >
             <option value='select'>Select</option>
-            {tokenList.map(token => (
+            {availableOutputTokens?.map(token => (
               <option key={token.address} value={token.address}>
                 {token.symbol}
               </option>
@@ -344,10 +353,6 @@ const SwapForm: FC = () => {
       >
         {_isLoading && <Spinner _className='size-4 mt-1 mr-1' />}
         {currStatus}
-
-        {formState.isValid ? '' : ' (Fill all fields)'}
-        {isLoading && '...loading'}
-        {isLoadingApprovals && '...loading approvals'}
       </button>
     </form>
   )
