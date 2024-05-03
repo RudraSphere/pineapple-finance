@@ -950,7 +950,7 @@
       "contracts/facets/MultiBatchSwapFacet.sol:MultiBatchSwapFacet": {
         "src": "contracts/facets/MultiBatchSwapFacet.sol:12",
         "version": {
-          "withMetadata": "a29a2837fc95589d1ae9b027e9fcf9ff51a88c54f0f2b4673303ce87945f8016",
+          "withMetadata": "3962042be6a122ae5fe90cc67c2c44a2f7d217a1de74481014359406f851257a",
           "withoutMetadata": "df8981e38ab1f4b3f0e6d5f63a684bd0944bd250fb8715e1714cfcbe2fdd3cfc",
           "linkedWithoutMetadata": "df8981e38ab1f4b3f0e6d5f63a684bd0944bd250fb8715e1714cfcbe2fdd3cfc"
         },
@@ -965,11 +965,11 @@
         ],
         "methods": [
           "(address,address)",
-          "estimateSwapOutputs(address[],uint256[],address)",
           "batchSwapsToSingleToken(address[],uint256[],address,address,uint256)",
           "batchSwapToSingleToken(address,address,uint256,address)",
           "setFeeBasisPoints(uint256)",
-          "estimateSwapOutput(address,address,uint256)"
+          "estimateSwapOutput(address,address,uint256)",
+          "estimateSwapOutputs(address[],uint256[],address)"
         ],
         "linkReferences": [],
         "errors": [
