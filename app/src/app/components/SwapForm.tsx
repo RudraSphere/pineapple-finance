@@ -187,22 +187,20 @@ const SwapForm: FC = () => {
     console.log('tokenPrices in', tokenPrices)
 
     inputTokens.forEach(token => {
-      const tokenInfo = getTokenFromAddress(token?.address)
-      const amountInWei = ethers.utils.parseUnits(token?.amount || '0', tokenInfo?.decimals)
-      const tokenUSDValue = tokenPrices[token?.address?.toLowerCase()] || 1
+      const isValidNumber = /^(\d+(\.\d+)?)$/.test(token?.amount)
+      if (isValidNumber && token?.address && userAddress) {
+        const tokenInfo = getTokenFromAddress(token?.address)
+        const amountInWei = ethers.utils.parseUnits(token?.amount || '0', tokenInfo?.decimals)
+        const tokenUSDValue = tokenPrices[token?.address?.toLowerCase()] || 1
 
-      console.log(
-        'BigNumber.from(1).pow(tokenInfo?.decimals || 0)',
-        BigNumber.from(1)
-          .pow(tokenInfo?.decimals || 0)
-          .toString()
-      )
+        console.log('amountInWei', amountInWei, tokenUSDValue, tokenInfo?.decimals)
 
-      totalUSD +=
-        amountInWei
-          ?.mul(tokenUSDValue)
-          ?.div(BigNumber.from(10).pow(tokenInfo?.decimals || 0))
-          ?.toNumber() || 0
+        totalUSD +=
+          amountInWei
+            ?.mul(tokenUSDValue)
+            ?.div(BigNumber.from(10).pow(tokenInfo?.decimals || 18))
+            ?.toNumber() || 0
+      }
     })
 
     const estimatedOutputUSD = totalUSD * 0.98 // 2% slippage
