@@ -8,6 +8,7 @@ interface TokenInfo {
   balance: string
   status: string
   symbol: string
+  address: string
   decimals: number
 }
 
@@ -39,6 +40,7 @@ const useTokenInfo = () => {
         acc[tokenList[idx].symbol] = {
           balance: cur.result,
           status: cur.status,
+          address: tokenList[idx].address,
           symbol: tokenList[idx].symbol,
           decimals: tokenList[idx].decimals,
         }

@@ -8,14 +8,14 @@ interface CheckApprovalProps {
 }
 
 const useCheckApproval = ({ token, from, to }: CheckApprovalProps) => {
-  const { data } = useReadContract({
+  const { data, isLoading, refetch } = useReadContract({
     abi: erc20Abi,
     address: token as any,
     functionName: 'allowance',
     args: [from as any, to as any],
   })
 
-  return { data }
+  return { data, isLoading, refetch }
 }
 
 export default useCheckApproval

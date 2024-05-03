@@ -16,6 +16,9 @@ const Navbar = () => {
           <Link href='/faucet' className='hover:text-gray-300'>
             Faucet
           </Link>
+          <Link href='/dca' className='hover:text-gray-300'>
+            DCA
+          </Link>
         </div>
         <div className='md:hidden'>
           <button className='text-white focus:outline-none'>
