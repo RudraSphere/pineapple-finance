@@ -1,3 +1,4 @@
+import { BoltIcon } from '@heroicons/react/16/solid'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
 
@@ -6,7 +7,7 @@ const Navbar = () => {
     <nav className='bg-gray-900 p-4 text-white shadow-lg'>
       <div className='container mx-auto flex items-center justify-between'>
         <div className='inline-flex gap-2 text-lg font-semibold'>
-          <img className='size-8' src={'./logo.svg'} />
+          <BoltIcon className='size-6 text-teal-400' />
           Pineapple Finance.
         </div>
         <div className='hidden space-x-4 md:flex'>
