@@ -23,6 +23,8 @@ export default function RootLayout({
           {children}
         </Web3Provider>
 
+        <div className='p-6'></div>
+
         {/* footer */}
         <footer
           className='

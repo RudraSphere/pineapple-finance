@@ -20,7 +20,7 @@ export default function Home() {
 
   return (
     <div className='mb-6 flex overflow-auto'>
-      <div className='mx-auto my-4 max-w-4xl text-center'>
+      <div className='mx-auto my-4 hidden max-w-4xl text-center lg:block'>
         <img src={'/img.svg'} className='mx-auto size-96' />
         <p className='mb-2 text-pretty font-mono text-3xl text-teal-500 underline underline-offset-8'>
           Your Funds are Safe.
