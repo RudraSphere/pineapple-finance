@@ -183,21 +183,17 @@ const SwapForm: FC = () => {
   useEffect(() => {
     console.log('running')
     const inputTokens = watch('tokens')
+    const targetToken = watch('targetToken')
     let totalUSD = 0
     console.log('tokenPrices in', tokenPrices)
 
     inputTokens.forEach(token => {
       const isValidNumber = /^(\d+(\.\d+)?)$/.test(token?.amount)
-      if (isValidNumber && token?.address && userAddress) {
-        const tokenInfo = getTokenFromAddress(token?.address)
-        const amountInWei = ethers.utils.parseUnits(token?.amount || '0', tokenInfo?.decimals)
+      console.log('isValid', isValidNumber, token?.amount)
+      if (isValidNumber && token?.address && userAddress && targetToken) {
         const tokenUSDValue = tokenPrices[token?.address?.toLowerCase()] || 1
 
-        console.log('amountInWei', amountInWei, tokenUSDValue, tokenInfo?.decimals)
-
-        totalUSD +=
-          amountInWei?.div(BigNumber.from(10).pow(tokenInfo?.decimals || 18))?.toNumber() *
-            tokenUSDValue || 0
+        totalUSD += token.amount ? Number(token.amount) * tokenUSDValue : 0
       }
     })
 
@@ -357,7 +353,7 @@ const SwapForm: FC = () => {
           className='peer sr-only'
         />
         <div className="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"></div>
-        <span className='ms-3 text-sm font-medium text-gray-900 dark:text-gray-300'>Send to</span>
+        <span className='ms-3 text-sm font-medium text-gray-300'>Send to</span>
       </label>
 
       {showRecipient && (
