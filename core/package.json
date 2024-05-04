@@ -5,7 +5,8 @@
     "clean": "rm -rf build crytic-export artifacts cache deployments/local*",
     "prettier:sol": "prettier --write \"contracts/**/*.sol\"",
     "test": "IS_TEST=true npx hardhat test",
-    "prettier": "prettier --write ."
+    "prettier": "prettier --write .",
+    "postDeployment": "mv ./deployments ../app"
   },
   "dependencies": {
     "@nomiclabs/hardhat-solhint": "^3.0.1",
