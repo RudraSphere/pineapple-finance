@@ -4,4 +4,3 @@
 import type * as dcaFacetSol from "./DCAFacet.sol";
 export type { dcaFacetSol };
 export type { MultiBatchSwapFacet } from "./MultiBatchSwapFacet";
-export type { TokenManagementFacet } from "./TokenManagementFacet";

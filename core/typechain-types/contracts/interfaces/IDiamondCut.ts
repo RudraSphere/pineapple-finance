@@ -38,7 +38,9 @@ export declare namespace IDiamondCut {
 }
 
 export interface IDiamondCutInterface extends Interface {
-  getFunction(nameOrSignature: "diamondCut"): FunctionFragment;
+  getFunction(
+    nameOrSignature: "diamondCut" | "updateSwapper"
+  ): FunctionFragment;
 
   getEvent(nameOrSignatureOrTopic: "DiamondCut"): EventFragment;
 
@@ -46,8 +48,16 @@ export interface IDiamondCutInterface extends Interface {
     functionFragment: "diamondCut",
     values: [IDiamondCut.FacetCutStruct[], AddressLike, BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "updateSwapper",
+    values: [AddressLike]
+  ): string;
 
   decodeFunctionResult(functionFragment: "diamondCut", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "updateSwapper",
+    data: BytesLike
+  ): Result;
 }
 
 export namespace DiamondCutEvent {
@@ -125,6 +135,12 @@ export interface IDiamondCut extends BaseContract {
     "nonpayable"
   >;
 
+  updateSwapper: TypedContractMethod<
+    [_newSwapper: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
@@ -140,6 +156,9 @@ export interface IDiamondCut extends BaseContract {
     [void],
     "nonpayable"
   >;
+  getFunction(
+    nameOrSignature: "updateSwapper"
+  ): TypedContractMethod<[_newSwapper: AddressLike], [void], "nonpayable">;
 
   getEvent(
     key: "DiamondCut"

@@ -399,9 +399,9 @@
       "contracts/Diamond.sol:Diamond": {
         "src": "contracts/Diamond.sol:8",
         "version": {
-          "withMetadata": "33651da51d2a5c766267a7e5fa46e0707381e5f38d792eb55584390bf6ddd8db",
-          "withoutMetadata": "33651da51d2a5c766267a7e5fa46e0707381e5f38d792eb55584390bf6ddd8db",
-          "linkedWithoutMetadata": "33651da51d2a5c766267a7e5fa46e0707381e5f38d792eb55584390bf6ddd8db"
+          "withMetadata": "5410e81e18cfe593bf87625d168f4dea247262b9d63cbb2f3637ddffeebfcb04",
+          "withoutMetadata": "5410e81e18cfe593bf87625d168f4dea247262b9d63cbb2f3637ddffeebfcb04",
+          "linkedWithoutMetadata": "5410e81e18cfe593bf87625d168f4dea247262b9d63cbb2f3637ddffeebfcb04"
         },
         "inherit": [],
         "libraries": [
@@ -421,7 +421,7 @@
           },
           {
             "kind": "delegatecall",
-            "src": "contracts/libraries/LibDiamond.sol:260"
+            "src": "contracts/libraries/LibDiamond.sol:266"
           }
         ],
         "layout": {
@@ -436,9 +436,9 @@
       "contracts/DiamondCutFacet.sol:DiamondCutFacet": {
         "src": "contracts/DiamondCutFacet.sol:7",
         "version": {
-          "withMetadata": "c568c0de1940d7a1f7aaf6e65d1b8ac9124d91fa980e31c6db9d839242cf2548",
-          "withoutMetadata": "0c975ff71f1d12a4eb3aaba94364f861d4542ab0ad387ad64afcb969c8be596d",
-          "linkedWithoutMetadata": "0c975ff71f1d12a4eb3aaba94364f861d4542ab0ad387ad64afcb969c8be596d"
+          "withMetadata": "1c73e88202d6fa256ee72225245b842567f024e7a8b4ccd55ad682549f49a925",
+          "withoutMetadata": "a82517e085ef4aa6bd89f62326179f2bb43aabfc5b27e22a1a4f77c22ab323af",
+          "linkedWithoutMetadata": "a82517e085ef4aa6bd89f62326179f2bb43aabfc5b27e22a1a4f77c22ab323af"
         },
         "inherit": [
           "contracts/interfaces/IDiamondCut.sol:IDiamondCut"
@@ -447,13 +447,14 @@
           "contracts/libraries/LibDiamond.sol:LibDiamond"
         ],
         "methods": [
-          "diamondCut(struct IDiamondCut.FacetCut[],address,bytes)"
+          "diamondCut(struct IDiamondCut.FacetCut[],address,bytes)",
+          "updateSwapper(address)"
         ],
         "linkReferences": [],
         "errors": [
           {
             "kind": "delegatecall",
-            "src": "contracts/libraries/LibDiamond.sol:260"
+            "src": "contracts/libraries/LibDiamond.sol:266"
           }
         ],
         "layout": {
@@ -553,9 +554,9 @@
       "contracts/DiamondInit.sol:DiamondInit": {
         "src": "contracts/DiamondInit.sol:31",
         "version": {
-          "withMetadata": "62d6443036d428db3bc80012603e370c44a0cd73971d4edf1caa09203a22223b",
-          "withoutMetadata": "66fcdbe5fa957ba8f347b59783cbcb2437d5e530f47321e58af25a4898e79802",
-          "linkedWithoutMetadata": "66fcdbe5fa957ba8f347b59783cbcb2437d5e530f47321e58af25a4898e79802"
+          "withMetadata": "84c4458874f55055f8caffb6fd608ee4eed77e260d1a37db6a33cbc2f863c04a",
+          "withoutMetadata": "4ef03d7fefebbfe1b6a172c2ff979fd023df167d53b8e52d3b5904717ada5381",
+          "linkedWithoutMetadata": "4ef03d7fefebbfe1b6a172c2ff979fd023df167d53b8e52d3b5904717ada5381"
         },
         "inherit": [],
         "libraries": [
@@ -639,13 +640,13 @@
               "label": "registry",
               "offset": 0,
               "slot": "0",
-              "type": "t_contract(PriceFeedRegistry)3202",
+              "type": "t_contract(PriceFeedRegistry)3246",
               "contract": "PriceAggregator",
               "src": "contracts/PriceAggregator.sol:8"
             }
           ],
           "types": {
-            "t_contract(PriceFeedRegistry)3202": {
+            "t_contract(PriceFeedRegistry)3246": {
               "label": "contract PriceFeedRegistry",
               "numberOfBytes": "20"
             }
@@ -753,6 +754,84 @@
         },
         "solcVersion": "0.8.10"
       },
+      "contracts/Swapper.sol:Swapper": {
+        "src": "contracts/Swapper.sol:14",
+        "version": {
+          "withMetadata": "cb56dd130d8b8dcc892d652a2fbd597b3baf019337cf31c26b6f0dc42249ede1",
+          "withoutMetadata": "7361364f04c69ea5949629e07cc80a3813b138b08fff651d10c75d8a17d940cf",
+          "linkedWithoutMetadata": "7361364f04c69ea5949629e07cc80a3813b138b08fff651d10c75d8a17d940cf"
+        },
+        "inherit": [
+          "contracts/interfaces/ISwapper.sol:ISwapper",
+          "@openzeppelin/contracts/access/Ownable.sol:Ownable",
+          "@openzeppelin/contracts/utils/Context.sol:Context",
+          "@openzeppelin/contracts/security/ReentrancyGuard.sol:ReentrancyGuard"
+        ],
+        "libraries": [
+          "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol:SafeERC20",
+          "contracts/libraries/LibDiamond.sol:LibDiamond",
+          "hardhat/console.sol:console"
+        ],
+        "methods": [
+          "(address,address)",
+          "updateSwapper(address)",
+          "getEstimateAmountOutForToken(address,address,uint256)",
+          "getEstimateAmountOutForTokens(address[],uint256[],address)",
+          "quickSwap(address,address,uint256,uint256,address,address)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "Swapper",
+            "src": "contracts/Swapper.sol:20"
+          },
+          {
+            "kind": "state-variable-immutable",
+            "name": "quickswapRouter",
+            "src": "contracts/Swapper.sol:17"
+          },
+          {
+            "kind": "state-variable-immutable",
+            "name": "uniswapFactory",
+            "src": "contracts/Swapper.sol:18"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_status",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_uint256",
+              "contract": "ReentrancyGuard",
+              "src": "@openzeppelin/contracts/security/ReentrancyGuard.sol:37"
+            },
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin/contracts/access/Ownable.sol:21"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.10"
+      },
       "contracts/TFacet.sol:TestFacet": {
         "src": "contracts/TFacet.sol:6",
         "version": {
@@ -777,51 +856,36 @@
         "solcVersion": "0.8.10"
       },
       "contracts/facets/DCAFacet.sol:DCAFacet": {
-        "src": "contracts/facets/DCAFacet.sol:15",
+        "src": "contracts/facets/DCAFacet.sol:17",
         "version": {
-          "withMetadata": "edc450ca9384d26573da3a40ff7180fa1f038ed2c03f941c2129fee4e7cb6266",
-          "withoutMetadata": "546d0d33bbd972a85573b21e7185129c4a19a241c1642af4af2d81e0f89eaa62",
-          "linkedWithoutMetadata": "546d0d33bbd972a85573b21e7185129c4a19a241c1642af4af2d81e0f89eaa62"
+          "withMetadata": "55381128296e5fa66b675686d35a3b88c70fdb23a83936cca689614f758e0f82",
+          "withoutMetadata": "7763f0e72a93cd7e073d7e43c073f01dc2ef4cfbaa46cc8f7788b41bd1fcd021",
+          "linkedWithoutMetadata": "7763f0e72a93cd7e073d7e43c073f01dc2ef4cfbaa46cc8f7788b41bd1fcd021"
         },
         "inherit": [
           "@openzeppelin/contracts/security/ReentrancyGuard.sol:ReentrancyGuard"
         ],
         "libraries": [
           "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol:SafeERC20",
-          "hardhat/console.sol:console"
+          "hardhat/console.sol:console",
+          "contracts/libraries/LibDiamond.sol:LibDiamond"
         ],
         "methods": [
-          "(address,address)",
-          "setFees(uint256)",
+          "()",
           "setupDCA(address,address,uint256,uint256,uint256)",
           "getOrderDetails(address,uint256)",
           "getAllOrders(address)",
           "getAllActiveOrders(address)",
           "executeDCA(uint256)",
-          "checkUpkeep(bytes)",
-          "performUpkeep(bytes)"
+          "checkUpkeep()",
+          "performUpkeep()"
         ],
         "linkReferences": [],
         "errors": [
           {
-            "kind": "constructor",
-            "contract": "DCAFacet",
-            "src": "contracts/facets/DCAFacet.sol:58"
-          },
-          {
-            "kind": "state-variable-immutable",
-            "name": "priceAggregator",
-            "src": "contracts/facets/DCAFacet.sol:35"
-          },
-          {
-            "kind": "state-variable-immutable",
-            "name": "uniswapRouter",
-            "src": "contracts/facets/DCAFacet.sol:36"
-          },
-          {
             "kind": "state-variable-assignment",
             "name": "feeRate",
-            "src": "contracts/facets/DCAFacet.sol:38"
+            "src": "contracts/facets/DCAFacet.sol:40"
           }
         ],
         "layout": {
@@ -840,15 +904,15 @@
               "slot": "1",
               "type": "t_uint256",
               "contract": "DCAFacet",
-              "src": "contracts/facets/DCAFacet.sol:38"
+              "src": "contracts/facets/DCAFacet.sol:40"
             },
             {
               "label": "userOrders",
               "offset": 0,
               "slot": "2",
-              "type": "t_mapping(t_address,t_array(t_struct(DCAOrder)3252_storage)dyn_storage)",
+              "type": "t_mapping(t_address,t_array(t_struct(DCAOrder)3715_storage)dyn_storage)",
               "contract": "DCAFacet",
-              "src": "contracts/facets/DCAFacet.sol:56"
+              "src": "contracts/facets/DCAFacet.sol:58"
             }
           ],
           "types": {
@@ -856,15 +920,15 @@
               "label": "address",
               "numberOfBytes": "20"
             },
-            "t_array(t_struct(DCAOrder)3252_storage)dyn_storage": {
+            "t_array(t_struct(DCAOrder)3715_storage)dyn_storage": {
               "label": "struct DCAFacet.DCAOrder[]",
               "numberOfBytes": "32"
             },
-            "t_mapping(t_address,t_array(t_struct(DCAOrder)3252_storage)dyn_storage)": {
+            "t_mapping(t_address,t_array(t_struct(DCAOrder)3715_storage)dyn_storage)": {
               "label": "mapping(address => struct DCAFacet.DCAOrder[])",
               "numberOfBytes": "32"
             },
-            "t_struct(DCAOrder)3252_storage": {
+            "t_struct(DCAOrder)3715_storage": {
               "label": "struct DCAFacet.DCAOrder",
               "members": [
                 {
@@ -930,7 +994,7 @@
         "solcVersion": "0.8.10"
       },
       "contracts/facets/DCAFacet.sol:IAggregatorV3": {
-        "src": "contracts/facets/DCAFacet.sol:11",
+        "src": "contracts/facets/DCAFacet.sol:13",
         "inherit": [],
         "libraries": [],
         "methods": [
@@ -948,23 +1012,22 @@
         "solcVersion": "0.8.10"
       },
       "contracts/facets/MultiBatchSwapFacet.sol:MultiBatchSwapFacet": {
-        "src": "contracts/facets/MultiBatchSwapFacet.sol:12",
+        "src": "contracts/facets/MultiBatchSwapFacet.sol:13",
         "version": {
-          "withMetadata": "3962042be6a122ae5fe90cc67c2c44a2f7d217a1de74481014359406f851257a",
-          "withoutMetadata": "df8981e38ab1f4b3f0e6d5f63a684bd0944bd250fb8715e1714cfcbe2fdd3cfc",
-          "linkedWithoutMetadata": "df8981e38ab1f4b3f0e6d5f63a684bd0944bd250fb8715e1714cfcbe2fdd3cfc"
+          "withMetadata": "19fc2953b2fdb1e65d953313d4928c824948eef63b3461a32cd82879ce72157d",
+          "withoutMetadata": "ebb01a27fc19bbff1eaa69dd9b4647f87db109d54946596e3499f0a3adc1a9d8",
+          "linkedWithoutMetadata": "ebb01a27fc19bbff1eaa69dd9b4647f87db109d54946596e3499f0a3adc1a9d8"
         },
         "inherit": [
-          "@openzeppelin/contracts/access/Ownable.sol:Ownable",
-          "@openzeppelin/contracts/utils/Context.sol:Context",
           "@openzeppelin/contracts/security/ReentrancyGuard.sol:ReentrancyGuard"
         ],
         "libraries": [
           "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol:SafeERC20",
-          "hardhat/console.sol:console"
+          "hardhat/console.sol:console",
+          "contracts/libraries/LibDiamond.sol:LibDiamond"
         ],
         "methods": [
-          "(address,address)",
+          "()",
           "batchSwapsToSingleToken(address[],uint256[],address,address,uint256)",
           "batchSwapToSingleToken(address,address,uint256,address)",
           "setFeeBasisPoints(uint256)",
@@ -974,24 +1037,9 @@
         "linkReferences": [],
         "errors": [
           {
-            "kind": "constructor",
-            "contract": "MultiBatchSwapFacet",
-            "src": "contracts/facets/MultiBatchSwapFacet.sol:21"
-          },
-          {
-            "kind": "state-variable-immutable",
-            "name": "quickswapRouter",
-            "src": "contracts/facets/MultiBatchSwapFacet.sol:15"
-          },
-          {
-            "kind": "state-variable-immutable",
-            "name": "uniswapFactory",
-            "src": "contracts/facets/MultiBatchSwapFacet.sol:16"
-          },
-          {
             "kind": "state-variable-assignment",
             "name": "feeBasisPoints",
-            "src": "contracts/facets/MultiBatchSwapFacet.sol:18"
+            "src": "contracts/facets/MultiBatchSwapFacet.sol:16"
           }
         ],
         "layout": {
@@ -1005,27 +1053,15 @@
               "src": "@openzeppelin/contracts/security/ReentrancyGuard.sol:37"
             },
             {
-              "label": "_owner",
-              "offset": 0,
-              "slot": "1",
-              "type": "t_address",
-              "contract": "Ownable",
-              "src": "@openzeppelin/contracts/access/Ownable.sol:21"
-            },
-            {
               "label": "feeBasisPoints",
               "offset": 0,
-              "slot": "2",
+              "slot": "1",
               "type": "t_uint256",
               "contract": "MultiBatchSwapFacet",
-              "src": "contracts/facets/MultiBatchSwapFacet.sol:18"
+              "src": "contracts/facets/MultiBatchSwapFacet.sol:16"
             }
           ],
           "types": {
-            "t_address": {
-              "label": "address",
-              "numberOfBytes": "20"
-            },
             "t_uint256": {
               "label": "uint256",
               "numberOfBytes": "32"
@@ -1033,29 +1069,6 @@
           },
           "layoutVersion": "1.2",
           "flat": true,
-          "namespaces": {}
-        },
-        "solcVersion": "0.8.10"
-      },
-      "contracts/facets/TokenManagementFacet.sol:TokenManagementFacet": {
-        "src": "contracts/facets/TokenManagementFacet.sol:6",
-        "version": {
-          "withMetadata": "228721ed34d1bd2d427f001b4a239d950557ed35257100d91db9cce3beba5c1c",
-          "withoutMetadata": "c4d60240607769ed3195832ccbf7109d0a5ac4560f020d026e495e8389eb37d8",
-          "linkedWithoutMetadata": "c4d60240607769ed3195832ccbf7109d0a5ac4560f020d026e495e8389eb37d8"
-        },
-        "inherit": [],
-        "libraries": [],
-        "methods": [
-          "getTokenBalance(address,address)"
-        ],
-        "linkReferences": [],
-        "errors": [],
-        "layout": {
-          "storage": [],
-          "types": {},
-          "layoutVersion": "1.2",
-          "flat": false,
           "namespaces": {}
         },
         "solcVersion": "0.8.10"
@@ -1106,7 +1119,8 @@
         "inherit": [],
         "libraries": [],
         "methods": [
-          "diamondCut(struct IDiamondCut.FacetCut[],address,bytes)"
+          "diamondCut(struct IDiamondCut.FacetCut[],address,bytes)",
+          "updateSwapper(address)"
         ],
         "linkReferences": [],
         "errors": [],
@@ -1128,6 +1142,26 @@
           "facetFunctionSelectors(address)",
           "facetAddresses()",
           "facetAddress(bytes4)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.10"
+      },
+      "contracts/interfaces/ISwapper.sol:ISwapper": {
+        "src": "contracts/interfaces/ISwapper.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "getEstimateAmountOutForToken(address,address,uint256)",
+          "getEstimateAmountOutForTokens(address[],uint256[],address)",
+          "quickSwap(address,address,uint256,uint256,address,address)"
         ],
         "linkReferences": [],
         "errors": [],
@@ -1197,7 +1231,7 @@
       "contracts/libraries/LibDiamond.sol:LibDiamond": {
         "src": "contracts/libraries/LibDiamond.sol:11",
         "version": {
-          "withMetadata": "f03f0d98063c8b614e0a2785492cafaa8e05ce1fd8e275a36dc6f5de35ca040d",
+          "withMetadata": "564af5797d4d1e2b4f0497e9881447534150068ca3cc52214656254454d6018e",
           "withoutMetadata": "a64c6cf9c6ba9368f5132c93a0196b3204a7963dbb4dd05dfddb4ab23126b8db",
           "linkedWithoutMetadata": "a64c6cf9c6ba9368f5132c93a0196b3204a7963dbb4dd05dfddb4ab23126b8db"
         },
@@ -1208,11 +1242,11 @@
         "errors": [
           {
             "kind": "delegatecall",
-            "src": "contracts/libraries/LibDiamond.sol:260"
+            "src": "contracts/libraries/LibDiamond.sol:266"
           },
           {
             "kind": "delegatecall",
-            "src": "contracts/libraries/LibDiamond.sol:260"
+            "src": "contracts/libraries/LibDiamond.sol:266"
           }
         ],
         "layout": {

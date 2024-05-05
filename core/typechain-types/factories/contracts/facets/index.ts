@@ -3,4 +3,3 @@
 /* eslint-disable */
 export * as dcaFacetSol from "./DCAFacet.sol";
 export { MultiBatchSwapFacet__factory } from "./MultiBatchSwapFacet__factory";
-export { TokenManagementFacet__factory } from "./TokenManagementFacet__factory";

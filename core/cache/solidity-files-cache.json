@@ -2,7 +2,7 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/ankit5577/Downloads/projects/git/pineapple-finance/core/contracts/Diamond.sol": {
-      "lastModificationDate": 1714485611679,
+      "lastModificationDate": 1714908425086,
       "contentHash": "ba4d4bf5587c103e593d5ee2de3e0810",
       "sourceName": "contracts/Diamond.sol",
       "solcConfig": {
@@ -48,8 +48,8 @@
       ]
     },
     "/Users/ankit5577/Downloads/projects/git/pineapple-finance/core/contracts/libraries/LibDiamond.sol": {
-      "lastModificationDate": 1714486784374,
-      "contentHash": "3592c7c436c9b8dc5de672603f6597b7",
+      "lastModificationDate": 1714910701731,
+      "contentHash": "e8c682ac93d13d0b5f76d1cad710ea52",
       "sourceName": "contracts/libraries/LibDiamond.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -92,8 +92,8 @@
       ]
     },
     "/Users/ankit5577/Downloads/projects/git/pineapple-finance/core/contracts/interfaces/IDiamondCut.sol": {
-      "lastModificationDate": 1713448757853,
-      "contentHash": "377e9815b6d71f7107ecaee99cf079db",
+      "lastModificationDate": 1714908486976,
+      "contentHash": "776840db6421f9f996dc871e4c968d57",
       "sourceName": "contracts/interfaces/IDiamondCut.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -176,8 +176,8 @@
       ]
     },
     "/Users/ankit5577/Downloads/projects/git/pineapple-finance/core/contracts/facets/MultiBatchSwapFacet.sol": {
-      "lastModificationDate": 1714689049703,
-      "contentHash": "1a8dbe1049e657e28c851f43c8c84432",
+      "lastModificationDate": 1714911630119,
+      "contentHash": "4d8a0cfcc0c43c6ba03d3959f3a25e95",
       "sourceName": "contracts/facets/MultiBatchSwapFacet.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -212,10 +212,11 @@
       "imports": [
         "@openzeppelin/contracts/token/ERC20/IERC20.sol",
         "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
-        "@openzeppelin/contracts/access/Ownable.sol",
         "@openzeppelin/contracts/security/ReentrancyGuard.sol",
         "../interfaces/IUniswapV2Router.sol",
         "../interfaces/IUniswapV2Factory.sol",
+        "../interfaces/ISwapper.sol",
+        "../libraries/LibDiamond.sol",
         "hardhat/console.sol"
       ],
       "versionPragmas": [
@@ -223,48 +224,6 @@
       ],
       "artifacts": [
         "MultiBatchSwapFacet"
-      ]
-    },
-    "/Users/ankit5577/Downloads/projects/git/pineapple-finance/core/contracts/interfaces/IUniswapV2Factory.sol": {
-      "lastModificationDate": 1713903965786,
-      "contentHash": "155b8675f4ddae8af0b528ad8709e225",
-      "sourceName": "contracts/interfaces/IUniswapV2Factory.sol",
-      "solcConfig": {
-        "version": "0.8.10",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "storageLayout",
-                "devdoc",
-                "userdoc",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IUniswapV2Factory"
       ]
     },
     "/Users/ankit5577/Downloads/projects/git/pineapple-finance/core/contracts/interfaces/IUniswapV2Router.sol": {
@@ -309,10 +268,10 @@
         "IUniswapV2Router"
       ]
     },
-    "/Users/ankit5577/Downloads/projects/git/pineapple-finance/core/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
-      "lastModificationDate": 1713446478412,
-      "contentHash": "5a20b2cad87ddb61c7a3a6af21289e28",
-      "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
+    "/Users/ankit5577/Downloads/projects/git/pineapple-finance/core/contracts/interfaces/IUniswapV2Factory.sol": {
+      "lastModificationDate": 1713903965786,
+      "contentHash": "155b8675f4ddae8af0b528ad8709e225",
+      "sourceName": "contracts/interfaces/IUniswapV2Factory.sol",
       "solcConfig": {
         "version": "0.8.10",
         "settings": {
@@ -343,14 +302,54 @@
           }
         }
       },
-      "imports": [
-        "../utils/Context.sol"
-      ],
+      "imports": [],
       "versionPragmas": [
         "^0.8.0"
       ],
       "artifacts": [
-        "Ownable"
+        "IUniswapV2Factory"
+      ]
+    },
+    "/Users/ankit5577/Downloads/projects/git/pineapple-finance/core/contracts/interfaces/ISwapper.sol": {
+      "lastModificationDate": 1714896725459,
+      "contentHash": "e7f62d24e04b2a87faec93db30c243fc",
+      "sourceName": "contracts/interfaces/ISwapper.sol",
+      "solcConfig": {
+        "version": "0.8.10",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout",
+                "devdoc",
+                "userdoc",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ISwapper"
       ]
     },
     "/Users/ankit5577/Downloads/projects/git/pineapple-finance/core/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
@@ -483,48 +482,6 @@
         "SafeERC20"
       ]
     },
-    "/Users/ankit5577/Downloads/projects/git/pineapple-finance/core/node_modules/@openzeppelin/contracts/utils/Context.sol": {
-      "lastModificationDate": 1713446472935,
-      "contentHash": "f07feb4a44b1a4872370da5aa70e8e46",
-      "sourceName": "@openzeppelin/contracts/utils/Context.sol",
-      "solcConfig": {
-        "version": "0.8.10",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "storageLayout",
-                "devdoc",
-                "userdoc",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "Context"
-      ]
-    },
     "/Users/ankit5577/Downloads/projects/git/pineapple-finance/core/node_modules/@openzeppelin/contracts/utils/Address.sol": {
       "lastModificationDate": 1713446472309,
       "contentHash": "211ffd288c1588ba8c10eae668ca3c66",
@@ -609,53 +566,9 @@
         "IERC20Permit"
       ]
     },
-    "/Users/ankit5577/Downloads/projects/git/pineapple-finance/core/contracts/facets/TokenManagementFacet.sol": {
-      "lastModificationDate": 1713448764585,
-      "contentHash": "3174755a8e155b165563ba6c80bf82a8",
-      "sourceName": "contracts/facets/TokenManagementFacet.sol",
-      "solcConfig": {
-        "version": "0.8.10",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "storageLayout",
-                "devdoc",
-                "userdoc",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "TokenManagementFacet"
-      ]
-    },
     "/Users/ankit5577/Downloads/projects/git/pineapple-finance/core/contracts/facets/DCAFacet.sol": {
-      "lastModificationDate": 1714715586413,
-      "contentHash": "56815a5119faa6449e24318b7f4d851b",
+      "lastModificationDate": 1714910725358,
+      "contentHash": "9ec41252fa521fcd9e4469c52a0fec3e",
       "sourceName": "contracts/facets/DCAFacet.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -693,7 +606,9 @@
         "@openzeppelin/contracts/security/ReentrancyGuard.sol",
         "../interfaces/IDCA.sol",
         "hardhat/console.sol",
-        "../interfaces/IUniswapV2Router.sol"
+        "../interfaces/IUniswapV2Router.sol",
+        "../interfaces/ISwapper.sol",
+        "../libraries/LibDiamond.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
@@ -743,6 +658,144 @@
       ],
       "artifacts": [
         "IDCA"
+      ]
+    },
+    "/Users/ankit5577/Downloads/projects/git/pineapple-finance/core/contracts/Swapper.sol": {
+      "lastModificationDate": 1714911685634,
+      "contentHash": "3c4eeae5203b59593c5a54c3605b787c",
+      "sourceName": "contracts/Swapper.sol",
+      "solcConfig": {
+        "version": "0.8.10",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout",
+                "devdoc",
+                "userdoc",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/security/ReentrancyGuard.sol",
+        "./interfaces/IUniswapV2Router.sol",
+        "./interfaces/IUniswapV2Factory.sol",
+        "./interfaces/ISwapper.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "./libraries/LibDiamond.sol",
+        "hardhat/console.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Swapper"
+      ]
+    },
+    "/Users/ankit5577/Downloads/projects/git/pineapple-finance/core/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
+      "lastModificationDate": 1713446478412,
+      "contentHash": "5a20b2cad87ddb61c7a3a6af21289e28",
+      "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
+      "solcConfig": {
+        "version": "0.8.10",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout",
+                "devdoc",
+                "userdoc",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../utils/Context.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Ownable"
+      ]
+    },
+    "/Users/ankit5577/Downloads/projects/git/pineapple-finance/core/node_modules/@openzeppelin/contracts/utils/Context.sol": {
+      "lastModificationDate": 1713446472935,
+      "contentHash": "f07feb4a44b1a4872370da5aa70e8e46",
+      "sourceName": "@openzeppelin/contracts/utils/Context.sol",
+      "solcConfig": {
+        "version": "0.8.10",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout",
+                "devdoc",
+                "userdoc",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Context"
       ]
     },
     "/Users/ankit5577/Downloads/projects/git/pineapple-finance/core/node_modules/@openzeppelin/contracts/access/AccessControl.sol": {
@@ -1181,7 +1234,7 @@
       ]
     },
     "/Users/ankit5577/Downloads/projects/git/pineapple-finance/core/contracts/DiamondGovernance.sol": {
-      "lastModificationDate": 1713461454584,
+      "lastModificationDate": 1714907895011,
       "contentHash": "9eb34b61c0ed79ee82e6937a942db23a",
       "sourceName": "contracts/DiamondGovernance.sol",
       "solcConfig": {
@@ -1315,8 +1368,8 @@
       ]
     },
     "/Users/ankit5577/Downloads/projects/git/pineapple-finance/core/contracts/DiamondCutFacet.sol": {
-      "lastModificationDate": 1714485716198,
-      "contentHash": "bf2f79f31bb300e6037854d2f4c6c4fb",
+      "lastModificationDate": 1714908435418,
+      "contentHash": "ceb2adf96350210dce0c5fb8ccf84834",
       "sourceName": "contracts/DiamondCutFacet.sol",
       "solcConfig": {
         "version": "0.8.10",

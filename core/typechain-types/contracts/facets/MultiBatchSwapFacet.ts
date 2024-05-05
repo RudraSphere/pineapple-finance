@@ -32,20 +32,10 @@ export interface MultiBatchSwapFacetInterface extends Interface {
       | "estimateSwapOutput"
       | "estimateSwapOutputs"
       | "feeBasisPoints"
-      | "owner"
-      | "quickswapRouter"
-      | "renounceOwnership"
       | "setFeeBasisPoints"
-      | "transferOwnership"
-      | "uniswapFactory"
   ): FunctionFragment;
 
-  getEvent(
-    nameOrSignatureOrTopic:
-      | "FeesCollected"
-      | "OwnershipTransferred"
-      | "TokensSwapped"
-  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeesCollected"): EventFragment;
 
   encodeFunctionData(
     functionFragment: "BPS_DIVISOR",
@@ -77,26 +67,9 @@ export interface MultiBatchSwapFacetInterface extends Interface {
     functionFragment: "feeBasisPoints",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "quickswapRouter",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "setFeeBasisPoints",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "uniswapFactory",
-    values?: undefined
   ): string;
 
   decodeFunctionResult(
@@ -123,25 +96,8 @@ export interface MultiBatchSwapFacetInterface extends Interface {
     functionFragment: "feeBasisPoints",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "quickswapRouter",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "setFeeBasisPoints",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "uniswapFactory",
     data: BytesLike
   ): Result;
 }
@@ -152,53 +108,6 @@ export namespace FeesCollectedEvent {
   export interface OutputObject {
     collector: string;
     feeAmount: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace OwnershipTransferredEvent {
-  export type InputTuple = [previousOwner: AddressLike, newOwner: AddressLike];
-  export type OutputTuple = [previousOwner: string, newOwner: string];
-  export interface OutputObject {
-    previousOwner: string;
-    newOwner: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace TokensSwappedEvent {
-  export type InputTuple = [
-    user: AddressLike,
-    fromToken: AddressLike,
-    toToken: AddressLike,
-    inputAmount: BigNumberish,
-    outputAmount: BigNumberish,
-    gasCost: BigNumberish,
-    slippage: BigNumberish
-  ];
-  export type OutputTuple = [
-    user: string,
-    fromToken: string,
-    toToken: string,
-    inputAmount: bigint,
-    outputAmount: bigint,
-    gasCost: bigint,
-    slippage: bigint
-  ];
-  export interface OutputObject {
-    user: string;
-    fromToken: string;
-    toToken: string;
-    inputAmount: bigint;
-    outputAmount: bigint;
-    gasCost: bigint;
-    slippage: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -258,7 +167,7 @@ export interface MultiBatchSwapFacet extends BaseContract {
       amount: BigNumberish,
       recipient: AddressLike
     ],
-    [void],
+    [[bigint, boolean] & { _amountGot: bigint; isSuccess: boolean }],
     "nonpayable"
   >;
 
@@ -277,7 +186,7 @@ export interface MultiBatchSwapFacet extends BaseContract {
   estimateSwapOutput: TypedContractMethod<
     [fromToken: AddressLike, toToken: AddressLike, inputAmount: BigNumberish],
     [bigint[]],
-    "view"
+    "nonpayable"
   >;
 
   estimateSwapOutputs: TypedContractMethod<
@@ -287,30 +196,16 @@ export interface MultiBatchSwapFacet extends BaseContract {
       outputToken: AddressLike
     ],
     [bigint],
-    "view"
+    "nonpayable"
   >;
 
   feeBasisPoints: TypedContractMethod<[], [bigint], "view">;
-
-  owner: TypedContractMethod<[], [string], "view">;
-
-  quickswapRouter: TypedContractMethod<[], [string], "view">;
-
-  renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
   setFeeBasisPoints: TypedContractMethod<
     [newFeeBPS: BigNumberish],
     [void],
     "nonpayable"
   >;
-
-  transferOwnership: TypedContractMethod<
-    [newOwner: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
-  uniswapFactory: TypedContractMethod<[], [string], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
@@ -328,7 +223,7 @@ export interface MultiBatchSwapFacet extends BaseContract {
       amount: BigNumberish,
       recipient: AddressLike
     ],
-    [void],
+    [[bigint, boolean] & { _amountGot: bigint; isSuccess: boolean }],
     "nonpayable"
   >;
   getFunction(
@@ -349,7 +244,7 @@ export interface MultiBatchSwapFacet extends BaseContract {
   ): TypedContractMethod<
     [fromToken: AddressLike, toToken: AddressLike, inputAmount: BigNumberish],
     [bigint[]],
-    "view"
+    "nonpayable"
   >;
   getFunction(
     nameOrSignature: "estimateSwapOutputs"
@@ -360,29 +255,14 @@ export interface MultiBatchSwapFacet extends BaseContract {
       outputToken: AddressLike
     ],
     [bigint],
-    "view"
+    "nonpayable"
   >;
   getFunction(
     nameOrSignature: "feeBasisPoints"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
-    nameOrSignature: "owner"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "quickswapRouter"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "renounceOwnership"
-  ): TypedContractMethod<[], [void], "nonpayable">;
-  getFunction(
     nameOrSignature: "setFeeBasisPoints"
   ): TypedContractMethod<[newFeeBPS: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "transferOwnership"
-  ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "uniswapFactory"
-  ): TypedContractMethod<[], [string], "view">;
 
   getEvent(
     key: "FeesCollected"
@@ -390,20 +270,6 @@ export interface MultiBatchSwapFacet extends BaseContract {
     FeesCollectedEvent.InputTuple,
     FeesCollectedEvent.OutputTuple,
     FeesCollectedEvent.OutputObject
-  >;
-  getEvent(
-    key: "OwnershipTransferred"
-  ): TypedContractEvent<
-    OwnershipTransferredEvent.InputTuple,
-    OwnershipTransferredEvent.OutputTuple,
-    OwnershipTransferredEvent.OutputObject
-  >;
-  getEvent(
-    key: "TokensSwapped"
-  ): TypedContractEvent<
-    TokensSwappedEvent.InputTuple,
-    TokensSwappedEvent.OutputTuple,
-    TokensSwappedEvent.OutputObject
   >;
 
   filters: {
@@ -416,28 +282,6 @@ export interface MultiBatchSwapFacet extends BaseContract {
       FeesCollectedEvent.InputTuple,
       FeesCollectedEvent.OutputTuple,
       FeesCollectedEvent.OutputObject
-    >;
-
-    "OwnershipTransferred(address,address)": TypedContractEvent<
-      OwnershipTransferredEvent.InputTuple,
-      OwnershipTransferredEvent.OutputTuple,
-      OwnershipTransferredEvent.OutputObject
-    >;
-    OwnershipTransferred: TypedContractEvent<
-      OwnershipTransferredEvent.InputTuple,
-      OwnershipTransferredEvent.OutputTuple,
-      OwnershipTransferredEvent.OutputObject
-    >;
-
-    "TokensSwapped(address,address,address,uint256,uint256,uint256,uint256)": TypedContractEvent<
-      TokensSwappedEvent.InputTuple,
-      TokensSwappedEvent.OutputTuple,
-      TokensSwappedEvent.OutputObject
-    >;
-    TokensSwapped: TypedContractEvent<
-      TokensSwappedEvent.InputTuple,
-      TokensSwappedEvent.OutputTuple,
-      TokensSwappedEvent.OutputObject
     >;
   };
 }

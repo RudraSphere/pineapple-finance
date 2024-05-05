@@ -5,5 +5,6 @@ export { IAggregatorV3__factory } from "./IAggregatorV3__factory";
 export { IDCA__factory } from "./IDCA__factory";
 export { IDiamondCut__factory } from "./IDiamondCut__factory";
 export { IDiamondLoupe__factory } from "./IDiamondLoupe__factory";
+export { ISwapper__factory } from "./ISwapper__factory";
 export { IUniswapV2Factory__factory } from "./IUniswapV2Factory__factory";
 export { IUniswapV2Router__factory } from "./IUniswapV2Router__factory";

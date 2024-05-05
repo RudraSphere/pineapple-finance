@@ -91,6 +91,19 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_newSwapper",
+        type: "address",
+      },
+    ],
+    name: "updateSwapper",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ] as const;
 
 export class IDiamondCut__factory {

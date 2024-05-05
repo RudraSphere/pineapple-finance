@@ -17,3 +17,4 @@ export type { Diamond } from "./Diamond";
 export type { DiamondCutFacet } from "./DiamondCutFacet";
 export type { DiamondGovernance } from "./DiamondGovernance";
 export type { PriceAggregator } from "./PriceAggregator";
+export type { Swapper } from "./Swapper";

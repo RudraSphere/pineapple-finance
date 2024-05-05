@@ -11,3 +11,4 @@ export { Diamond__factory } from "./Diamond__factory";
 export { DiamondCutFacet__factory } from "./DiamondCutFacet__factory";
 export { DiamondGovernance__factory } from "./DiamondGovernance__factory";
 export { PriceAggregator__factory } from "./PriceAggregator__factory";
+export { Swapper__factory } from "./Swapper__factory";

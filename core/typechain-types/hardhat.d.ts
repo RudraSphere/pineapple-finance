@@ -78,10 +78,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MultiBatchSwapFacet__factory>;
     getContractFactory(
-      name: "TokenManagementFacet",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.TokenManagementFacet__factory>;
-    getContractFactory(
       name: "IAggregatorV3",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IAggregatorV3__factory>;
@@ -97,6 +93,10 @@ declare module "hardhat/types/runtime" {
       name: "IDiamondLoupe",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IDiamondLoupe__factory>;
+    getContractFactory(
+      name: "ISwapper",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ISwapper__factory>;
     getContractFactory(
       name: "IUniswapV2Factory",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -117,6 +117,10 @@ declare module "hardhat/types/runtime" {
       name: "PriceFeedRegistry",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PriceFeedRegistry__factory>;
+    getContractFactory(
+      name: "Swapper",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Swapper__factory>;
     getContractFactory(
       name: "TestFacet",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -203,11 +207,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.MultiBatchSwapFacet>;
     getContractAt(
-      name: "TokenManagementFacet",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.TokenManagementFacet>;
-    getContractAt(
       name: "IAggregatorV3",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -227,6 +226,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.IDiamondLoupe>;
+    getContractAt(
+      name: "ISwapper",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ISwapper>;
     getContractAt(
       name: "IUniswapV2Factory",
       address: string | ethers.Addressable,
@@ -252,6 +256,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.PriceFeedRegistry>;
+    getContractAt(
+      name: "Swapper",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Swapper>;
     getContractAt(
       name: "TestFacet",
       address: string | ethers.Addressable,
@@ -323,10 +332,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MultiBatchSwapFacet>;
     deployContract(
-      name: "TokenManagementFacet",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.TokenManagementFacet>;
-    deployContract(
       name: "IAggregatorV3",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IAggregatorV3>;
@@ -342,6 +347,10 @@ declare module "hardhat/types/runtime" {
       name: "IDiamondLoupe",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IDiamondLoupe>;
+    deployContract(
+      name: "ISwapper",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ISwapper>;
     deployContract(
       name: "IUniswapV2Factory",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -362,6 +371,10 @@ declare module "hardhat/types/runtime" {
       name: "PriceFeedRegistry",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.PriceFeedRegistry>;
+    deployContract(
+      name: "Swapper",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Swapper>;
     deployContract(
       name: "TestFacet",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -448,11 +461,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MultiBatchSwapFacet>;
     deployContract(
-      name: "TokenManagementFacet",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.TokenManagementFacet>;
-    deployContract(
       name: "IAggregatorV3",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -472,6 +480,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IDiamondLoupe>;
+    deployContract(
+      name: "ISwapper",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ISwapper>;
     deployContract(
       name: "IUniswapV2Factory",
       args: any[],
@@ -497,6 +510,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.PriceFeedRegistry>;
+    deployContract(
+      name: "Swapper",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Swapper>;
     deployContract(
       name: "TestFacet",
       args: any[],

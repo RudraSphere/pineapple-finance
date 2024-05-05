@@ -89,10 +89,7 @@ export interface DCAFacetInterface extends Interface {
       | "getAllOrders"
       | "getOrderDetails"
       | "performUpkeep"
-      | "priceAggregator"
-      | "setFees"
       | "setupDCA"
-      | "uniswapRouter"
       | "userOrders"
   ): FunctionFragment;
 
@@ -106,7 +103,7 @@ export interface DCAFacetInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "checkUpkeep",
-    values: [BytesLike]
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "executeDCA",
@@ -127,23 +124,11 @@ export interface DCAFacetInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "performUpkeep",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "priceAggregator",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setFees",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setupDCA",
     values: [AddressLike, AddressLike, BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "uniswapRouter",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "userOrders",
@@ -176,16 +161,7 @@ export interface DCAFacetInterface extends Interface {
     functionFragment: "performUpkeep",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "priceAggregator",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "setFees", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setupDCA", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "uniswapRouter",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "userOrders", data: BytesLike): Result;
 }
 
@@ -303,11 +279,7 @@ export interface DCAFacet extends BaseContract {
 
   FEE_DECIMALS: TypedContractMethod<[], [bigint], "view">;
 
-  checkUpkeep: TypedContractMethod<
-    [arg0: BytesLike],
-    [[boolean, string] & { upkeepNeeded: boolean }],
-    "view"
-  >;
+  checkUpkeep: TypedContractMethod<[], [boolean], "view">;
 
   executeDCA: TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
 
@@ -331,11 +303,7 @@ export interface DCAFacet extends BaseContract {
     "view"
   >;
 
-  performUpkeep: TypedContractMethod<[arg0: BytesLike], [void], "nonpayable">;
-
-  priceAggregator: TypedContractMethod<[], [string], "view">;
-
-  setFees: TypedContractMethod<[_rate: BigNumberish], [void], "nonpayable">;
+  performUpkeep: TypedContractMethod<[], [void], "nonpayable">;
 
   setupDCA: TypedContractMethod<
     [
@@ -348,8 +316,6 @@ export interface DCAFacet extends BaseContract {
     [void],
     "nonpayable"
   >;
-
-  uniswapRouter: TypedContractMethod<[], [string], "view">;
 
   userOrders: TypedContractMethod<
     [arg0: AddressLike, arg1: BigNumberish],
@@ -377,11 +343,7 @@ export interface DCAFacet extends BaseContract {
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "checkUpkeep"
-  ): TypedContractMethod<
-    [arg0: BytesLike],
-    [[boolean, string] & { upkeepNeeded: boolean }],
-    "view"
-  >;
+  ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
     nameOrSignature: "executeDCA"
   ): TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
@@ -411,13 +373,7 @@ export interface DCAFacet extends BaseContract {
   >;
   getFunction(
     nameOrSignature: "performUpkeep"
-  ): TypedContractMethod<[arg0: BytesLike], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "priceAggregator"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "setFees"
-  ): TypedContractMethod<[_rate: BigNumberish], [void], "nonpayable">;
+  ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setupDCA"
   ): TypedContractMethod<
@@ -431,9 +387,6 @@ export interface DCAFacet extends BaseContract {
     [void],
     "nonpayable"
   >;
-  getFunction(
-    nameOrSignature: "uniswapRouter"
-  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "userOrders"
   ): TypedContractMethod<
