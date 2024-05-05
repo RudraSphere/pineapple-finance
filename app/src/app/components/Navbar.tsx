@@ -2,7 +2,7 @@ import { BoltIcon } from '@heroicons/react/16/solid'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
 
-const Navbar = () => {
+const Navbar: React.FC = () => {
   return (
     <nav className='bg-gray-900 p-4 text-white shadow-lg'>
       <div className='container mx-auto flex items-center justify-between'>

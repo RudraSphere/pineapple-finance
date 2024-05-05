@@ -4,11 +4,11 @@ import Spinner from '@/elements/Spinner'
 import useCheckApprovals from '@/services/hooks/useCheckApprovals'
 import useTokenInfo from '@/services/hooks/useTokenInfo'
 import useTokenPrice from '@/services/hooks/useTokenPrice'
-import { cn, getTokenFromAddress } from '@/utils/common'
+import { checkValidNumber, cn, getTokenFromAddress } from '@/utils/common'
 import { tokenList } from '@/utils/tokens'
 import { ArrowsUpDownIcon, XCircleIcon } from '@heroicons/react/16/solid'
 import { BigNumber, ethers } from 'ethers'
-import { FC, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { erc20Abi, formatUnits } from 'viem'
@@ -22,17 +22,19 @@ interface SwapFormInputs {
   recipient: string
 }
 
-const SwapForm: FC = () => {
-  const { address: userAddress } = useAccount()
-  const { tokensInfo, refetch: refetchTokens } = useTokenInfo()
-  const [isLoading, setIsLoading] = useState(false)
-  const wContract = useWriteContract()
-  const [errorMessage, setErrorMessage] = useState('')
-  const [currStatus, setCurrStatus] = useState('Batch Swap')
-  const { prices: tokenPrices } = useTokenPrice()
+const SwapForm: React.FC = () => {
+  // State
   const [showRecipient, setShowRecipient] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [currStatus, setCurrStatus] = useState('Batch Swap')
+  const [errorMessage, setErrorMessage] = useState('')
   const [estimatedValueUSD, setEstimatedValueUSD] = useState(0)
 
+  // Hooks
+  const { address: userAddress } = useAccount()
+  const { tokensInfo, refetch: refetchTokens } = useTokenInfo()
+  const wContract = useWriteContract()
+  const { prices: tokenPrices } = useTokenPrice()
   const { register, getValues, handleSubmit, control, reset, watch, setValue, formState } =
     useForm<SwapFormInputs>({
       defaultValues: {
@@ -48,7 +50,7 @@ const SwapForm: FC = () => {
     refetch: refetchApprovals,
   } = useCheckApprovals(
     getValues('tokens')
-      .filter(({ address }) => address)
+      .filter(({ address }) => !!address)
       .map(({ address }) => {
         return {
           token: address,
@@ -57,6 +59,7 @@ const SwapForm: FC = () => {
         }
       })
   )
+  const _tokens = watch('tokens')
 
   const onSubmitHandler = async (data: SwapFormInputs) => {
     const { tokens, targetToken } = data
@@ -102,7 +105,7 @@ const SwapForm: FC = () => {
       for (let approval of approvals) {
         console.log('approval', approval.limit.toString(), amountInWei.toString())
         if (
-          approval.token === token.address &&
+          approval?.token?.toLowerCase() === token?.address?.toLowerCase() &&
           BigNumber.from(approval.limit || '0').lt(amountInWei)
         ) {
           setCurrStatus(`Approving ${tokenInfo.symbol}...`)
@@ -169,26 +172,26 @@ const SwapForm: FC = () => {
     setCurrStatus('Batch Swap')
   }
 
-  const addTokenField = () => {
-    const newTokenFields = [...watch('tokens'), { address: '', amount: '' }]
+  const addTokenField = (): void => {
+    const newTokenFields = [..._tokens, { address: '', amount: '' }]
     setValue('tokens', newTokenFields)
   }
 
   // Function to remove a token input
-  const removeToken = (index: number) => {
-    const newTokenFields = watch('tokens').filter((_, i) => i !== index)
+  const removeToken = (index: number): void => {
+    const newTokenFields = _tokens.filter((_, i) => i !== index)
     setValue('tokens', newTokenFields)
   }
 
   useEffect(() => {
     console.log('running')
-    const inputTokens = watch('tokens')
+    const inputTokens = _tokens
     const targetToken = watch('targetToken')
-    let totalUSD = 0
+    let totalUSD: number = 0
     console.log('tokenPrices in', tokenPrices)
 
     inputTokens.forEach(token => {
-      const isValidNumber = /^(\d+(\.\d+)?)$/.test(token?.amount)
+      const isValidNumber = checkValidNumber(token?.amount)
       console.log('isValid', isValidNumber, token?.amount)
       if (isValidNumber && token?.address && userAddress && targetToken) {
         const tokenUSDValue = tokenPrices[token?.address?.toLowerCase()] || 1
@@ -200,9 +203,9 @@ const SwapForm: FC = () => {
     const estimatedOutputUSD = totalUSD * 0.98 // 2% slippage
     console.log('estimatedOutputUSD', estimatedOutputUSD)
     setEstimatedValueUSD(estimatedOutputUSD)
-  }, [watch('tokens').map(token => token.amount), tokenPrices])
+  }, [_tokens.map(token => token.amount), tokenPrices])
 
-  const inputTokens = watch('tokens').map(token => token.address)
+  const inputTokens = _tokens.map(token => token.address)
   const availableOutputTokens = tokenList.filter(token => !inputTokens.includes(token.address))
 
   const _isLoading = isLoading || isLoadingApprovals
@@ -213,7 +216,7 @@ const SwapForm: FC = () => {
       className='mx-auto mb-20 max-w-xl rounded-lg bg-slate-800 p-5 shadow-sm shadow-slate-800 duration-200 hover:shadow-slate-600'
     >
       <h3 className='mb-4 text-xl font-semibold'>Batch Swap Tokens</h3>
-      {watch('tokens').map((token, index) => (
+      {_tokens?.map((token, index) => (
         <div key={index} className='mb-3 flex flex-col gap-1 rounded-lg bg-slate-200 p-2 pb-4'>
           <label className='mb-2 block text-sm font-bold text-gray-700'>You Pay:</label>
           <div className='flex gap-2'>
@@ -242,7 +245,7 @@ const SwapForm: FC = () => {
               name={`tokens.${index}.amount`}
               rules={{
                 validate: value => {
-                  const isValidNumber = /^(\d+(\.\d+)?)$/.test(value)
+                  const isValidNumber = checkValidNumber(value)
                   console.log('isValidNumber', isValidNumber, value)
                   if (!isValidNumber) return 'Invalid amount 😕'
 

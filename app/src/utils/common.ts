@@ -10,4 +10,8 @@ function getTokenFromAddress(address: string) {
   return tokenList.find(token => token.address?.toLowerCase() === address?.toLowerCase())
 }
 
-export { cn, getTokenFromAddress }
+const checkValidNumber = (_number: string): boolean => {
+  return /^(\d+(\.\d+)?)$/.test(_number)
+}
+
+export { checkValidNumber, cn, getTokenFromAddress }

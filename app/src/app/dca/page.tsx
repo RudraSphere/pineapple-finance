@@ -6,7 +6,7 @@ import { useAccount, useReadContract, useWriteContract } from 'wagmi'
 import useCheckApproval from '@/services/hooks/useCheckApproval'
 import useEnsureNetwork from '@/services/hooks/useEnsureNetwork'
 import useTokenInfo from '@/services/hooks/useTokenInfo'
-import { cn, getTokenFromAddress } from '@/utils/common'
+import { cn } from '@/utils/common'
 import { tokenList } from '@/utils/tokens'
 import { BigNumber, ethers } from 'ethers'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
@@ -15,8 +15,10 @@ import { toast } from 'react-hot-toast'
 import { erc20Abi } from 'viem'
 import { abi as DCAFacetAbi } from '../../../deployments/internalRPC/DCAFacet.json'
 import { address as diamondAddress } from '../../../deployments/internalRPC/Diamond.json'
+import ActiveDCA from './components/ActiceDCA'
+import { IDCA } from './types'
 
-const DcaPage = () => {
+const DcaPage: React.FC = () => {
   const { isConnected, address: userAddress } = useAccount()
   const { isCorrectNetwork } = useEnsureNetwork()
   const { tokensInfo, refetch: refetchTokens } = useTokenInfo()
@@ -37,8 +39,7 @@ const DcaPage = () => {
     },
   })
 
-  const [orders, setOrders] = useState([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState<boolean>(false)
   const fromToken = watch('fromToken')
   const toTokenOptions = tokenList.filter(token => token.address !== fromToken)
 
@@ -90,7 +91,7 @@ const DcaPage = () => {
 
     try {
       // Approve token
-      if (BigNumber.from(approval).lt(amountInWei)) {
+      if (BigNumber.from(approval || '0').lt(amountInWei || '0')) {
         toast.success(`Approving ${selectedTokenInfo.symbol} for DCA`, {
           icon: '⌛️',
         })
@@ -156,7 +157,7 @@ const DcaPage = () => {
                     className='border-1 border:bg-slate-800 mb-2 block w-full max-w-md rounded-lg border bg-slate-800 p-2 text-slate-200 shadow-md duration-200 hover:cursor-pointer hover:shadow-lg hover:shadow-slate-700'
                   >
                     <option value=''>Select From Token</option>
-                    {tokenList.map(token => (
+                    {tokenList?.map(token => (
                       <option key={token.address} value={token.address}>
                         {token.symbol}
                       </option>
@@ -180,7 +181,7 @@ const DcaPage = () => {
                     className='border-1 border:bg-slate-800 mb-2 block w-full max-w-md rounded-lg border bg-slate-800 p-2 text-slate-200 shadow-md duration-200 hover:cursor-pointer hover:shadow-lg hover:shadow-slate-700'
                   >
                     <option value=''>Select To Token</option>
-                    {toTokenOptions.map(token => (
+                    {toTokenOptions?.map(token => (
                       <option key={token.address} value={token.address}>
                         {token.symbol}
                       </option>
@@ -296,77 +297,8 @@ const DcaPage = () => {
         </form>
       </div>
 
-      {(userActiveOrders as any)?.length > 0 ? (
-        <div className='max-h-[37rem] flex-1 overflow-y-scroll rounded-lg bg-slate-800 p-5 text-white shadow-lg'>
-          <h2 className='mb-4 text-2xl font-bold text-white'>Your DCA Orders:</h2>
-          {(userActiveOrders as any).map((order, index) => (
-            <div key={index} className='mb-4 rounded-lg bg-slate-700 p-4 shadow-lg'>
-              <div className='grid grid-cols-2 gap-2 text-white'>
-                <p>
-                  From Token:{' '}
-                  <span className='font-semibold'>
-                    {getTokenFromAddress(order.order.fromToken)?.symbol}
-                  </span>
-                </p>
-                <p>
-                  To Token:{' '}
-                  <span className='font-semibold'>
-                    {getTokenFromAddress(order.order.toToken)?.symbol}
-                  </span>
-                </p>
-                <p>
-                  Interval:
-                  <span className='font-semibold'>
-                    {' '}
-                    {BigNumber.from(order.order.interval || '0')
-                      .div(60)
-                      .toString()}{' '}
-                    mins
-                  </span>
-                </p>
-                <p className='text-gray-300'>
-                  Next Execution Time:
-                  <br />
-                  <span className='font-semibold text-white'>
-                    {new Date(
-                      BigNumber.from(order?.order?.nextExecutionTime || 0).toNumber() * 1000
-                    ).toLocaleString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      second: '2-digit',
-                      hour12: true,
-                    })}
-                  </span>
-                </p>
-
-                <p>
-                  Amount:
-                  <span className='font-semibold'>
-                    {' '}
-                    {formatUnits(
-                      order.order.totalAmount,
-                      getTokenFromAddress(order.order.fromToken)?.decimals || 18
-                    )}
-                    {getTokenFromAddress(order.order.fromToken)?.symbol}
-                  </span>
-                </p>
-                <p>
-                  Orders Placed:{' '}
-                  <span className='font-semibold'>
-                    {BigNumber.from(order.order.ordersPlaced).toString()}/
-                    {BigNumber.from(order.order.orderCount).toString()}
-                  </span>
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p>No active DCA orders found.</p>
-      )}
+      {/* Show Activa DCA */}
+      <ActiveDCA userActiveOrders={userActiveOrders as IDCA[]} />
     </div>
   )
 }

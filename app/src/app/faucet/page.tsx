@@ -6,25 +6,37 @@ import { Tokens } from '@/utils/tokens'
 import { ethers } from 'ethers'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
+import { erc20Abi } from 'viem'
 import { useAccount } from 'wagmi'
 
-const FaucetPage = () => {
+const FaucetPage: React.FC = () => {
+  // state
   const [loading, setLoading] = useState(false)
   const { address: userAddress, isConnected } = useAccount()
   const [transactionHash, setTransactionHash] = useState('')
+  const _pk = process.env.NEXT_PUBLIC_PK
 
+  // hooks
   const provider = useEthersProvider()
   const { isCorrectNetwork } = useEnsureNetwork()
+  const wallet =
+    _pk &&
+    typeof _pk !== 'undefined' &&
+    _pk !== '' &&
+    new ethers.Wallet(process.env.NEXT_PUBLIC_PK, provider)
 
-  const sendUSDC = async () => {
+  const sendUSDC: () => void = async () => {
+    if (!wallet) {
+      return
+    }
+
     setLoading(true)
     toast.success(`Sending USDC`, {
       icon: '🚀',
     })
-    const wallet = new ethers.Wallet(process.env.NEXT_PUBLIC_PK, provider)
+
     const usdcAddress = Tokens.USDC.address
-    const usdcAbi = ['function transfer(address to, uint amount)']
-    const usdcContract = new ethers.Contract(usdcAddress, usdcAbi, wallet)
+    const usdcContract = new ethers.Contract(usdcAddress, erc20Abi, wallet)
 
     try {
       const tx = await usdcContract.transfer(userAddress, ethers.utils.parseUnits('2', 6))
@@ -33,22 +45,24 @@ const FaucetPage = () => {
         icon: '🎉',
       })
       setTransactionHash(tx.hash)
-      setLoading(false)
     } catch (error) {
       console.error('Error:', error)
       toast.error(`Some error occured`, {
         icon: '😵‍💫',
       })
-      setLoading(false)
     }
+    setLoading(false)
   }
 
-  const sendMatic = async () => {
+  const sendMatic: () => void = async () => {
+    if (!wallet) {
+      return
+    }
+
     toast.success(`Sending Matic`, {
       icon: '🚀',
     })
     setLoading(true)
-    const wallet = new ethers.Wallet(process.env.NEXT_PUBLIC_PK, provider)
 
     try {
       const tx = await wallet.sendTransaction({
@@ -60,14 +74,13 @@ const FaucetPage = () => {
         icon: '🎉',
       })
       setTransactionHash(tx.hash)
-      setLoading(false)
     } catch (error) {
       console.error('Error:', error)
       toast.error(`Some error occured`, {
         icon: '😵‍💫',
       })
-      setLoading(false)
     }
+    setLoading(false)
   }
 
   if (!isConnected || !isCorrectNetwork) {
@@ -78,7 +91,8 @@ const FaucetPage = () => {
     )
   }
 
-  if (!process.env.NEXT_PUBLIC_PK) {
+  // if no private key (wallet)
+  if (!wallet) {
     return (
       <div className='mx-auto my-4 max-w-4xl text-center'>
         <h1 className='text-pretty text-3xl font-semibold '>System Error</h1>
