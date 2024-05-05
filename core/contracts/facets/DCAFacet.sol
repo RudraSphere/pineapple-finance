@@ -7,6 +7,8 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "../interfaces/IDCA.sol"; // ! TODO: later add this interface.
 import "hardhat/console.sol";
 import "../interfaces/IUniswapV2Router.sol";
+import "../interfaces/ISwapper.sol";
+import "../libraries/LibDiamond.sol";
 
 interface IAggregatorV3 {
     function getLatestPrice(address token) external view returns (int);
@@ -14,6 +16,7 @@ interface IAggregatorV3 {
 
 contract DCAFacet is ReentrancyGuard {
     using SafeERC20 for IERC20;
+
     struct DCAOrder {
         address fromToken;
         address toToken;
@@ -24,6 +27,7 @@ contract DCAFacet is ReentrancyGuard {
         uint256 orderCount;
         uint256 ordersPlaced;
     }
+
     struct OrderDetail {
         uint256 id;
         DCAOrder order;
@@ -32,9 +36,7 @@ contract DCAFacet is ReentrancyGuard {
         int currentPrice;
     }
 
-    address public immutable priceAggregator;
-    address public immutable uniswapRouter;
-    uint256 public constant FEE_DECIMALS = 10000; // Represents 100.00%
+    uint256 public constant FEE_DECIMALS = 10_000; // Represents 100.00%
     uint256 public feeRate = 250; // 2.5%
 
     event AllOrdersExecuted(address indexed user, uint256 index);
@@ -55,17 +57,7 @@ contract DCAFacet is ReentrancyGuard {
 
     mapping(address => DCAOrder[]) public userOrders;
 
-    constructor(address _priceAggregator, address _uniswapRouter) {
-        priceAggregator = _priceAggregator;
-        uniswapRouter = _uniswapRouter;
-    }
-
-    // TODO: set modifier or make it ownable to only by governer.
-    function setFees(uint256 _rate) external {
-        require(_rate > 0 && _rate <= FEE_DECIMALS, "Fees must be 0 >= 100%");
-
-        feeRate = _rate;
-    }
+    constructor() {}
 
     function setupDCA(
         address _fromToken,
@@ -90,7 +82,6 @@ contract DCAFacet is ReentrancyGuard {
         );
 
         uint256 feeAmount = (_totalAmount * feeRate) / FEE_DECIMALS;
-
         uint256 amountAfterFees = (_totalAmount - feeAmount);
 
         // ! convert fees to native currency so, contract can itself call some functions later.
@@ -108,6 +99,12 @@ contract DCAFacet is ReentrancyGuard {
                 ordersPlaced: 0
             })
         );
+
+        // auto execute orders if any order is due
+        if (checkUpkeep()) {
+            performUpkeep();
+        }
+
         emit DCASetup(
             msg.sender,
             _fromToken,
@@ -190,20 +187,21 @@ contract DCAFacet is ReentrancyGuard {
         );
         console.log("Executing DCA for user %s", msg.sender, address(this));
 
-        address[] memory path = new address[](2);
-        path[0] = order.fromToken;
-        path[1] = order.toToken;
-
-        // assuming, contract will always have enough balance to swap
-        IERC20(order.fromToken).approve(uniswapRouter, order.amountPerInterval);
-
-        IUniswapV2Router(uniswapRouter).swapExactTokensForTokens(
-            order.amountPerInterval,
-            0, // ! TODO: may use oracle to avoid impermanent loss
-            path,
-            msg.sender,
-            block.timestamp
+        IERC20(order.fromToken).approve(
+            address(LibDiamond.getSwapperAddress()),
+            order.amountPerInterval
         );
+
+        (, bool isSuccess) = ISwapper(LibDiamond.getSwapperAddress()).quickSwap(
+            order.fromToken,
+            order.toToken,
+            order.amountPerInterval,
+            0,
+            msg.sender,
+            address(this)
+        );
+
+        require(isSuccess, "DCAFacet::executeDCA: Swap failed");
 
         order.ordersPlaced++;
         order.nextExecutionTime += order.interval;
@@ -222,13 +220,7 @@ contract DCAFacet is ReentrancyGuard {
         }
     }
 
-    function checkUpkeep(
-        bytes calldata /* checkData */
-    )
-        external
-        view
-        returns (bool upkeepNeeded, bytes memory /* performData */)
-    {
+    function checkUpkeep() public view returns (bool upkeepNeeded) {
         upkeepNeeded = false;
         for (uint256 i = 0; i < userOrders[msg.sender].length; i++) {
             if (
@@ -238,12 +230,10 @@ contract DCAFacet is ReentrancyGuard {
                 break;
             }
         }
-        return (upkeepNeeded, bytes(""));
+        return (upkeepNeeded);
     }
 
-    function performUpkeep(
-        bytes calldata /* performData */
-    ) external nonReentrant {
+    function performUpkeep() public nonReentrant {
         for (uint256 i = 0; i < userOrders[msg.sender].length; i++) {
             if (
                 block.timestamp >= userOrders[msg.sender][i].nextExecutionTime

@@ -3,38 +3,20 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "../interfaces/IUniswapV2Router.sol";
 import "../interfaces/IUniswapV2Factory.sol";
+import "../interfaces/ISwapper.sol";
+import "../libraries/LibDiamond.sol";
 import "hardhat/console.sol";
 
-contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
+contract MultiBatchSwapFacet is ReentrancyGuard {
     using SafeERC20 for IERC20;
-
-    IUniswapV2Router public immutable quickswapRouter;
-    IUniswapV2Factory public immutable uniswapFactory;
 
     uint256 public feeBasisPoints = 250; // 2.5%
     uint256 public constant BPS_DIVISOR = 10_000;
 
-    constructor(address _uniswapRouter, address _uniswapFactory) {
-        require(_uniswapRouter != address(0), "ERR::ZERO_ADDRESS::ROUTER");
-        require(_uniswapFactory != address(0), "ERR::ZERO_ADDRESS::FACTORY");
-
-        quickswapRouter = IUniswapV2Router(_uniswapRouter);
-        uniswapFactory = IUniswapV2Factory(_uniswapFactory);
-    }
-
-    event TokensSwapped(
-        address indexed user,
-        address indexed fromToken,
-        address indexed toToken,
-        uint256 inputAmount,
-        uint256 outputAmount,
-        uint256 gasCost,
-        uint256 slippage
-    );
+    constructor() {}
 
     event FeesCollected(address indexed collector, uint256 feeAmount);
 
@@ -75,43 +57,20 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
             console.log("Fees collected");
 
             IERC20(inputToken).safeApprove(
-                address(quickswapRouter),
+                address(LibDiamond.getSwapperAddress()),
                 swapAmount
             );
 
-            address[] memory path = new address[](2);
-            path[0] = inputToken;
-            path[1] = outputToken;
-
-            console.log("Swapping %s to %s", inputToken, outputToken);
-            uint256[] memory amountsOut = quickswapRouter
-                .swapExactTokensForTokens(
+            (, bool isSuccess) = ISwapper(LibDiamond.getSwapperAddress())
+                .quickSwap(
+                    inputToken,
+                    outputToken,
                     swapAmount,
-                    // (swapAmount * (BPS_DIVISOR - slippageTolerance)) /
-                    //     BPS_DIVISOR, // May need to check it.
-                    0,
-                    path,
+                    slippageTolerance,
                     recipient,
-                    (block.timestamp * 2)
+                    msg.sender
                 );
-
-            console.log("Swapped %s to %s", inputToken, outputToken);
-            console.log(
-                "receipient balance after swap ",
-                IERC20(outputToken).balanceOf(recipient),
-                recipient
-            );
-            console.log(IERC20(inputToken).balanceOf(recipient));
-
-            emit TokensSwapped(
-                msg.sender,
-                inputToken,
-                outputToken,
-                swapAmount,
-                amountsOut[1],
-                tx.gasprice,
-                slippageTolerance
-            );
+            require(isSuccess, "ERR::SWAP_FAILED");
         }
     }
 
@@ -120,12 +79,13 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
         address toToken,
         uint256 amount,
         address recipient
-    ) external nonReentrant {
+    ) external nonReentrant returns (uint256 _amountGot, bool isSuccess) {
         console.log("calling batchSwapToSingleToken");
-        IERC20(fromToken).safeApprove(address(quickswapRouter), amount);
-        address _directPair = uniswapFactory.getPair(fromToken, toToken);
-        console.log("direct pair %s", _directPair);
-        address[] memory path;
+        IERC20(fromToken).safeTransferFrom(msg.sender, address(this), amount);
+        IERC20(fromToken).safeApprove(
+            address(LibDiamond.getSwapperAddress()),
+            amount
+        );
         console.log(
             "receipient balance::Before:",
             IERC20(toToken).balanceOf(recipient)
@@ -135,24 +95,9 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
             IERC20(fromToken).balanceOf(recipient)
         );
 
-        IERC20(fromToken).safeTransferFrom(msg.sender, address(this), amount);
-
-        if (_directPair != address(0)) {
-            // if direct pair exists
-            path = new address[](2);
-            path[0] = fromToken;
-            path[1] = toToken;
-        } else {
-            path = determineSwapPath(fromToken, toToken);
-        }
-
-        uint256[] memory amountsOut = quickswapRouter.swapExactTokensForTokens(
-            amount,
-            0, // TODO: calculate or use Dex's function
-            path,
-            recipient,
-            (block.timestamp * 3)
-        );
+        (_amountGot, isSuccess) = ISwapper(LibDiamond.getSwapperAddress())
+            .quickSwap(fromToken, toToken, amount, 0, recipient, msg.sender);
+        require(isSuccess, "ERR::SWAP_FAILED");
 
         console.log("Swapped %s to %s", fromToken, toToken);
         console.log(
@@ -163,107 +108,49 @@ contract MultiBatchSwapFacet is ReentrancyGuard, Ownable {
             "receipient balance::After:",
             IERC20(fromToken).balanceOf(recipient)
         );
-        emit TokensSwapped(
-            msg.sender,
-            fromToken,
-            toToken,
-            amount,
-            amountsOut[amountsOut.length - 1],
-            tx.gasprice,
-            0 // for now
-        );
-    }
-
-    function determineSwapPath(
-        address fromToken,
-        address toToken
-    ) internal view returns (address[] memory) {
-        address[] memory path = new address[](3);
-        address intermediateToken = findIntermediateToken(fromToken, toToken);
-
-        path[0] = fromToken;
-        path[1] = intermediateToken;
-        path[2] = toToken;
-
-        return path;
-    }
-
-    function findIntermediateToken(
-        address fromToken,
-        address toToken
-    ) internal pure returns (address) {
-        return 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359; // USDC for now
     }
 
     function _collectFees(address token, uint256 feeAmount) internal {
-        address feeCollector = owner();
+        address feeCollector = LibDiamond.contractOwner();
         if (feeCollector != address(0)) {
             IERC20(token).safeTransfer(feeCollector, feeAmount);
             emit FeesCollected(feeCollector, feeAmount);
         }
     }
 
-    function setFeeBasisPoints(uint256 newFeeBPS) external onlyOwner {
+    function setFeeBasisPoints(uint256 newFeeBPS) external {
+        LibDiamond.enforceIsContractOwner();
         require(newFeeBPS <= BPS_DIVISOR, "ERR::INVALID_FEE_BPS");
 
         feeBasisPoints = newFeeBPS;
-    }
-
-    function findBestSwapPath(
-        address fromToken,
-        address toToken
-    ) internal view returns (address[] memory) {
-        address directPair = uniswapFactory.getPair(fromToken, toToken);
-
-        if (directPair != address(0)) {
-            // Direct swap
-            address[] memory directPath = new address[](2);
-            directPath[0] = fromToken;
-            directPath[1] = toToken;
-            return directPath;
-        } else {
-            // Multi-hop
-            address[] memory multiHopPath = new address[](3);
-            multiHopPath[0] = fromToken;
-            multiHopPath[1] = findIntermediateToken(fromToken, toToken);
-            multiHopPath[2] = toToken;
-            return multiHopPath;
-        }
     }
 
     function estimateSwapOutput(
         address fromToken,
         address toToken,
         uint256 inputAmount
-    ) public view returns (uint256[] memory) {
-        address[] memory path = findBestSwapPath(fromToken, toToken);
-        return quickswapRouter.getAmountsOut(inputAmount, path);
+    ) public returns (uint256[] memory) {
+        return
+            ISwapper(LibDiamond.getSwapperAddress())
+                .getEstimateAmountOutForToken(fromToken, toToken, inputAmount);
     }
 
     function estimateSwapOutputs(
-        address[] calldata inputTokens,
-        uint256[] calldata inputAmounts,
+        address[] memory inputTokens,
+        uint256[] memory inputAmounts,
         address outputToken
-    ) external view returns (uint256 outputAmount) {
+    ) external returns (uint256 outputAmount) {
         require(
             inputTokens.length == inputAmounts.length,
             "Input arrays must be of the same length"
         );
 
-        outputAmount = 0;
-
-        for (uint i = 0; i < inputTokens.length; i++) {
-            address[] memory path = findBestSwapPath(
-                inputTokens[i],
-                outputToken
-            );
-
-            uint256[] memory amountsOut = quickswapRouter.getAmountsOut(
-                inputAmounts[i],
-                path
-            );
-            outputAmount += amountsOut[1];
-        }
-        return outputAmount;
+        return
+            ISwapper(LibDiamond.getSwapperAddress())
+                .getEstimateAmountOutForTokens(
+                    inputTokens,
+                    inputAmounts,
+                    outputToken
+                );
     }
 }

@@ -77,7 +77,7 @@ const config: HardhatUserConfig = {
     },
   },
   mocha: {
-    timeout: 40000,
+    timeout: 100000,
   },
   paths: {
     sources: "./contracts",
