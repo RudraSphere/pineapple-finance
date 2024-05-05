@@ -29,7 +29,6 @@ async function localFixtures() {
     priceAggregator.address,
     ROUTERS.QUICKSWAP_V2,
   ]);
-  const tokenManagementFacet = await deployFacet("TokenManagementFacet", []);
   const multiBatchSwap = await deployFacet("MultiBatchSwapFacet", [
     ROUTERS.QUICKSWAP_V2,
     ROUTERS.QUICKSWAP_FACTORY_V2,

@@ -18,6 +18,12 @@ library LibDiamond {
         uint16 selectorCount;
         mapping(bytes4 => bool) supportedInterfaces;
         address contractOwner;
+        address swapper;
+    }
+
+    function getSwapperAddress() internal view returns (address) {
+        DiamondStorage storage ds = diamondStorage();
+        return ds.swapper;
     }
 
     function diamondStorage()

@@ -41,4 +41,15 @@ contract DiamondCutFacet is IDiamondCut {
         emit DiamondCut(_diamondCut, _init, _calldata);
         LibDiamond.initializeDiamondCut(_init, _calldata);
     }
+
+    function updateSwapper(address _newSwapper) external {
+        LibDiamond.enforceIsContractOwner();
+        require(_newSwapper != address(0), "Invalid swapper address");
+        LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
+        require(
+            _newSwapper != ds.swapper,
+            "New swapper address must be different"
+        );
+        ds.swapper = _newSwapper;
+    }
 }

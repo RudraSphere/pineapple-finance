@@ -20,4 +20,6 @@ interface IDiamondCut {
         address _init,
         bytes calldata _calldata
     ) external;
+
+    function updateSwapper(address _newSwapper) external;
 }
