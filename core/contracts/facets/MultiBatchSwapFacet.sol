@@ -113,6 +113,7 @@ contract MultiBatchSwapFacet is ReentrancyGuard {
     function _collectFees(address token, uint256 feeAmount) internal {
         address feeCollector = LibDiamond.contractOwner();
         if (feeCollector != address(0)) {
+            console.log("Collecting fees", feeAmount, feeCollector);
             IERC20(token).safeTransfer(feeCollector, feeAmount);
             emit FeesCollected(feeCollector, feeAmount);
         }
