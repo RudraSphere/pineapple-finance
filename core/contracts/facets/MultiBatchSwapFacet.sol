@@ -10,6 +10,9 @@ import "../interfaces/ISwapper.sol";
 import "../libraries/LibDiamond.sol";
 import "hardhat/console.sol";
 
+/// @title MultiBatchSwapFacet
+/// @notice Handles multiple token swaps in batches, collecting fees and ensuring proper execution.
+/// @dev Extends ReentrancyGuard to prevent reentrant calls to sensitive functions.
 contract MultiBatchSwapFacet is ReentrancyGuard {
     using SafeERC20 for IERC20;
 
@@ -18,8 +21,16 @@ contract MultiBatchSwapFacet is ReentrancyGuard {
 
     constructor() {}
 
+    // -------------------------------- EVENTS --------------------------------
     event FeesCollected(address indexed collector, uint256 feeAmount);
 
+    /// @notice Executes multiple token swaps using Swapper Contract.
+    /// @param inputTokens Array of addresses representing the tokens to swap from.
+    /// @param inputAmounts Array of amounts corresponding to each token in `inputTokens`.
+    /// @param outputToken token address to which all input tokens are swapped.
+    /// @param recipient address that will receive the output tokens.
+    /// @param slippageTolerance maximum tolerated slippage for the swaps.
+    /// @dev This function uses the external `ISwapper` interface to perform swaps and handle fees.
     function batchSwapsToSingleToken(
         address[] memory inputTokens,
         uint256[] memory inputAmounts,
@@ -74,6 +85,14 @@ contract MultiBatchSwapFacet is ReentrancyGuard {
         }
     }
 
+    /// @notice Performs a single token swap.
+    /// @param fromToken token address to swap from.
+    /// @param toToken token address to swap to.
+    /// @param amount amount of `fromToken` to swap.
+    /// @param recipient address that will receive the `toToken`.
+    /// @return _amountGot amount of `toToken` received from the swap.
+    /// @return isSuccess True if the swap was successful.
+    /// @dev Approves the `ISwapper` to handle the specified amount of `fromToken`.
     function batchSwapToSingleToken(
         address fromToken,
         address toToken,
@@ -110,6 +129,10 @@ contract MultiBatchSwapFacet is ReentrancyGuard {
         );
     }
 
+    /// @notice Collects fees by transferring the specified `feeAmount` of `token` to the `feeCollector`.
+    /// @param token token from which fees are collected.
+    /// @param feeAmount amount of fees to collect.
+    /// @dev fee collector address is retrieved from the LibDiamond contract owner.
     function _collectFees(address token, uint256 feeAmount) internal {
         address feeCollector = LibDiamond.contractOwner();
         if (feeCollector != address(0)) {
@@ -119,6 +142,9 @@ contract MultiBatchSwapFacet is ReentrancyGuard {
         }
     }
 
+    /// @notice Updates the fee basis points.
+    /// @param newFeeBPS new fee basis points to set.
+    /// @dev Ensures that only the contract owner can update fee rates and that the new fee is within a valid range.
     function setFeeBasisPoints(uint256 newFeeBPS) external {
         LibDiamond.enforceIsContractOwner();
         require(newFeeBPS <= BPS_DIVISOR, "ERR::INVALID_FEE_BPS");
@@ -126,6 +152,11 @@ contract MultiBatchSwapFacet is ReentrancyGuard {
         feeBasisPoints = newFeeBPS;
     }
 
+    /// @notice Estimates the output amount for a swap from `fromToken` to `toToken` given `inputAmount`.
+    /// @param fromToken token being swapped from.
+    /// @param toToken token being swapped to.
+    /// @param inputAmount amount of `fromToken` being swapped.
+    /// @return estimated output amount in `toToken`.
     function estimateSwapOutput(
         address fromToken,
         address toToken,
@@ -136,6 +167,11 @@ contract MultiBatchSwapFacet is ReentrancyGuard {
                 .getEstimateAmountOutForToken(fromToken, toToken, inputAmount);
     }
 
+    /// @notice Estimates the output amounts for swaps from multiple `inputTokens` to a single `outputToken`.
+    /// @param inputTokens Array of token addresses being swapped from.
+    /// @param inputAmounts Array of amounts for each token in `inputTokens`.
+    /// @param outputToken token address being swapped to.
+    /// @return outputAmount total estimated output amount in `outputToken`.
     function estimateSwapOutputs(
         address[] memory inputTokens,
         uint256[] memory inputAmounts,

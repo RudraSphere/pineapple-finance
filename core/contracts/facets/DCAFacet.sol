@@ -11,9 +11,14 @@ import "../interfaces/ISwapper.sol";
 import "../libraries/LibDiamond.sol";
 
 interface IAggregatorV3 {
+    /// @notice Retrieves the latest price for a given token.
+    /// @param token token address.
+    /// @return The latest price of the token.
     function getLatestPrice(address token) external view returns (int);
 }
 
+/// @title A Facet for Diamond Contract for creating and managing dollar-cost averaging orders
+/// @notice This contract allows users to set up and execute periodic swaps from one token to another.
 contract DCAFacet is ReentrancyGuard {
     using SafeERC20 for IERC20;
 
@@ -35,10 +40,12 @@ contract DCAFacet is ReentrancyGuard {
         uint256 currentValue;
         int currentPrice;
     }
+    mapping(address => DCAOrder[]) public userOrders;
 
     uint256 public constant FEE_DECIMALS = 10_000; // Represents 100.00%
     uint256 public feeRate = 250; // 2.5%
 
+    // -------------------------------- EVENTS --------------------------------
     event AllOrdersExecuted(address indexed user, uint256 index);
     event DCASetup(
         address indexed user,
@@ -55,10 +62,14 @@ contract DCAFacet is ReentrancyGuard {
         uint256 amount
     );
 
-    mapping(address => DCAOrder[]) public userOrders;
-
     constructor() {}
 
+    /// @notice Sets up a new DCA order.
+    /// @param _fromToken token to be sold periodically.
+    /// @param _toToken token to be purchased.
+    /// @param _totalAmount total amount of the fromToken to be sold.
+    /// @param _interval time interval between each order execution.
+    /// @param _orderCount total number of orders to execute.
     function setupDCA(
         address _fromToken,
         address _toToken,
@@ -115,6 +126,10 @@ contract DCAFacet is ReentrancyGuard {
         );
     }
 
+    /// @notice Retrieves details for a specific order.
+    /// @param user address of the user whose order details are being retrieved.
+    /// @param index index of the order in the user's list of orders.
+    /// @return details of the specified order.
     function getOrderDetails(
         address user,
         uint index
@@ -141,12 +156,18 @@ contract DCAFacet is ReentrancyGuard {
             });
     }
 
+    /// @notice Retrieves all orders for a user.
+    /// @param user address of the user.
+    /// @return A list of all orders for the specified user.
     function getAllOrders(
         address user
     ) public view returns (DCAOrder[] memory) {
         return userOrders[user];
     }
 
+    /// @notice Retrieves all active orders for a user.
+    /// @param user address of the user.
+    /// @return A list of details for all active orders for the specified user.
     function getAllActiveOrders(
         address user
     ) public view returns (OrderDetail[] memory) {
@@ -175,6 +196,8 @@ contract DCAFacet is ReentrancyGuard {
         return activeOrders;
     }
 
+    /// @notice Executes a DCA order based on its schedule.
+    /// @param index index of the order in the user's list of orders.
     function executeDCA(uint index) public {
         DCAOrder storage order = userOrders[msg.sender][index];
         require(
@@ -220,6 +243,8 @@ contract DCAFacet is ReentrancyGuard {
         }
     }
 
+    /// @notice Checks if there are any orders due for execution.
+    /// @return upkeepNeeded True if there are orders due for execution, false otherwise.
     function checkUpkeep() public view returns (bool upkeepNeeded) {
         upkeepNeeded = false;
         for (uint256 i = 0; i < userOrders[msg.sender].length; i++) {
@@ -233,6 +258,7 @@ contract DCAFacet is ReentrancyGuard {
         return (upkeepNeeded);
     }
 
+    /// @notice Executes all due DCA orders for the caller.
     function performUpkeep() public nonReentrant {
         for (uint256 i = 0; i < userOrders[msg.sender].length; i++) {
             if (
