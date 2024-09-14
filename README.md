@@ -7,6 +7,10 @@ This project implements a Decentralized Finance (DeFi) application using a Diamo
 dApp is hosted on Cloudflare using Static Site Generation
 preview: https://pineapple-finance.pages.dev/
 
+Forked Network Polygon is on `AWS EC2 instance`
+DNS: https://ankit5577.eu.org
+ec2 ip: 65.2.170.179
+
 ## Overview
 
 The project integrates multiple facets in a diamond architecture to manage different aspects of DCA strategies:
